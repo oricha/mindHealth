@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{event.add.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="flex flex-wrap mb-6">
+                <h1 class="grow text-3xl md:text-4xl font-medium mb-2">[[#{event.add.headline}]]</h1>
+                <div>
+                    <a th:href="@{/events}" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-4 rounded px-5 py-2">[[#{event.add.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('event')}" />
+            <form th:action="@{/events/create}" method="post" novalidate="">
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='title', required=true)}" />
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='description', type='textarea')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='location')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='dateTime', required=true, type='datetime')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='price', required=true)}" />
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='availableSeats', required=true, type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='category', type='select')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='event', field='organizer', required=true, type='select')}" />
+                <input type="submit" th:value="#{event.add.headline}" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
+            </form>
+        </div>
+    </body>
+</html>
