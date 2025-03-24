@@ -14,7 +14,6 @@ import com.mindhealth.mindhealth.repos.UserRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import java.util.List;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -113,6 +112,17 @@ public class UserService {
             return referencedWarning;
         }
         return null;
+    }
+
+    public List<UserDTO> getUsersByIds(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return List.of();
+        }
+        
+        return userRepository.findAllById(userIds)
+                .stream()
+                .map(user -> mapToDTO(user, new UserDTO()))
+                .toList();
     }
 
 }

@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title th:text="${event.getTitle() + ' - Hipsy'}">Event Detail - Hipsy</title>
+        <style>
+            .event-header {
+                background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+                background-size: cover;
+                background-position: center;
+            }
+            .tag {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.875rem;
+                background-color: #f3f4f6;
+            }
+            .organizer-card {
+                background: white;
+                border-radius: 1rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .event-section {
+                background: white;
+                border-radius: 1rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <!-- Event Header -->
+            <div class="event-header relative h-96" th:style="'background-image: url(' + ${event.getImageUrl()} + ')'">
+                <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+                <div class="container mx-auto px-4 h-full flex items-end pb-12 relative z-10">
+                    <div class="text-white">
+                        <div class="flex gap-2 mb-4">
+                            <span th:each="tag : ${event.getTags()}" 
+                                  th:text="${tag}"
+                                  class="tag bg-emerald-100 text-emerald-800">Tag</span>
+                        </div>
+                        <h1 th:text="${event.getTitle()}" class="text-4xl font-bold mb-4">Event Title</h1>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <img th:if="${organizer != null}" 
+                                     th:src="${organizer.getAvatarUrl()}"
+                                     class="w-10 h-10 rounded-full">
+                                <div>
+                                    <p th:if="${organizer != null}" 
+                                       th:text="${organizer.getFullName()}"
+                                       class="font-medium">Organizer Name</p>
+                                    <p class="text-sm opacity-75">Organizer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Content -->
+            <div class="container mx-auto px-4 py-12">
+                <div class="grid grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="col-span-2">
+                        <!-- About Section -->
+                        <div class="event-section p-8 mb-8">
+                            <h2 class="text-2xl font-bold mb-6">ABOUT THIS EVENT</h2>
+                            <p th:text="${event.getDescription()}" 
+                               class="text-gray-600 whitespace-pre-line">Event description</p>
+                        </div>
+
+                        <!-- Location Section -->
+                        <div class="event-section p-8">
+                            <h2 class="text-2xl font-bold mb-6">VENUE</h2>
+                            <div class="flex items-start gap-4">
+                                <svg class="w-6 h-6 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <div>
+                                    <p th:text="${event.getLocation()}" 
+                                       class="font-medium mb-2">Location</p>
+                                    <a href="#" class="text-emerald-600 hover:text-emerald-700">View on map</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-8">
+                        <!-- Ticket Info -->
+                        <div class="event-section p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-2xl font-bold" th:text="${'€' + event.getPrice()}">€75</span>
+                                <span th:text="${event.getAvailableSeats() + ' spots left'}" 
+                                      class="text-emerald-600">Spots left</span>
+                            </div>
+                            <div class="space-y-4 mb-6">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span th:text="${#temporals.format(event.getDateTime(), 'EEEE, MMM d, yyyy - h:mm a')}"
+                                          class="text-gray-600">Date and Time</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="text-gray-600">2 hours</span>
+                                </div>
+                            </div>
+                            <button class="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 
+                                         transition-colors font-medium">
+                                Book now
+                            </button>
+                        </div>
+
+                        <!-- Organizer Info -->
+                        <div class="organizer-card p-6">
+                            <h3 class="font-bold mb-4">ABOUT THE ORGANIZER</h3>
+                            <div class="flex items-center gap-4 mb-4">
+                                <img th:if="${organizer != null}" 
+                                     th:src="${organizer.getAvatarUrl()}"
+                                     class="w-12 h-12 rounded-full">
+                                <div>
+                                    <p th:if="${organizer != null}" 
+                                       th:text="${organizer.getFullName()}"
+                                       class="font-medium">Organizer Name</p>
+                                    <p class="text-sm text-gray-500">
+                                        <span>285 events</span> • 
+                                        <span>53 followers</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">
+                                Live music by Einaudi and other neoclassical composers in the most beautiful halls and churches in the Netherlands.
+                            </p>
+                            <button class="w-full border-2 border-gray-900 py-2 rounded-lg hover:bg-gray-100 
+                                         transition-colors font-medium">
+                                Follow
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- More Events Section -->
+                <div class="mt-16">
+                    <h2 class="text-2xl font-bold mb-8">More events from this organizer</h2>
+                    <div class="grid grid-cols-4 gap-6">
+                        <div th:each="relatedEvent : ${relatedEvents}" class="event-card">
+                            <img th:src="${relatedEvent.getImageUrl()}" 
+                                 class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h3 th:text="${relatedEvent.getTitle()}" 
+                                    class="font-semibold mb-2">Event Title</h3>
+                                <div class="flex gap-2">
+                                    <span th:each="tag : ${relatedEvent.getTags()}" 
+                                          th:text="${tag}"
+                                          class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-800">Tag</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html> 

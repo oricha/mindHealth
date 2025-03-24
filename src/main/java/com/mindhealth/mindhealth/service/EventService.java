@@ -11,7 +11,9 @@ import com.mindhealth.mindhealth.repos.TicketRepository;
 import com.mindhealth.mindhealth.repos.UserRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -115,6 +117,61 @@ public class EventService {
             return referencedWarning;
         }
         return null;
+    }
+
+    public List<EventDTO> findEvents(String search, String category, String date, String location, String sort) {
+        // Get all events first
+        List<EventDTO> events = findAll();
+        
+        // Apply filters
+        return events.stream()
+            .filter(event -> search == null || 
+                           event.getTitle().toLowerCase().contains(search.toLowerCase()) ||
+                           event.getDescription().toLowerCase().contains(search.toLowerCase()))
+            .filter(event -> category == null || 
+                           event.getCategory() != null && 
+                           event.getCategory().toString().equals(category))
+            .filter(event -> location == null || 
+                           event.getLocation().toLowerCase().contains(location.toLowerCase()))
+            .filter(event -> filterByDate(event, date))
+            .sorted((e1, e2) -> sortEvents(e1, e2, sort))
+            .collect(Collectors.toList());
+    }
+
+    private boolean filterByDate(EventDTO event, String dateFilter) {
+        if (dateFilter == null) return true;
+        
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime eventDate = event.getDateTime();
+        
+        return switch (dateFilter.toLowerCase()) {
+            case "today" -> eventDate.toLocalDate().equals(now.toLocalDate());
+            case "this_week" -> eventDate.isAfter(now) && 
+                               eventDate.isBefore(now.plusWeeks(1));
+            case "this_month" -> eventDate.isAfter(now) && 
+                                eventDate.isBefore(now.plusMonths(1));
+            default -> true;
+        };
+    }
+
+    private int sortEvents(EventDTO e1, EventDTO e2, String sort) {
+        return switch (sort.toLowerCase()) {
+            case "date" -> e1.getDateTime().compareTo(e2.getDateTime());
+            case "price" -> e1.getPrice().compareTo(e2.getPrice());
+            case "popularity" -> Integer.compare(
+                e2.getAvailableSeats(), e1.getAvailableSeats()
+            );
+            default -> 0;
+        };
+    }
+
+    public List<EventDTO> findByOrganizer(Long organizerId, Long excludeEventId) {
+        return eventRepository.findByOrganizer_Id(organizerId)
+            .stream()
+            .filter(event -> !event.getId().equals(excludeEventId))
+            .limit(4)  // Only get 4 related events
+            .map(event -> mapToDTO(event, new EventDTO()))
+            .collect(Collectors.toList());
     }
 
 }

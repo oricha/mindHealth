@@ -4,9 +4,11 @@ import com.mindhealth.mindhealth.domain.Category;
 import com.mindhealth.mindhealth.domain.User;
 import com.mindhealth.mindhealth.domain.Event;
 import com.mindhealth.mindhealth.model.EventDTO;
+import com.mindhealth.mindhealth.model.UserDTO;
 import com.mindhealth.mindhealth.repos.CategoryRepository;
 import com.mindhealth.mindhealth.repos.UserRepository;
 import com.mindhealth.mindhealth.service.EventService;
+import com.mindhealth.mindhealth.service.UserService;
 import com.mindhealth.mindhealth.util.CustomCollectors;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import com.mindhealth.mindhealth.util.WebUtils;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/events")
@@ -32,12 +35,14 @@ public class EventController {
     private final EventService eventService;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     public EventController(final EventService eventService,
-            final CategoryRepository categoryRepository, final UserRepository userRepository) {
+            final CategoryRepository categoryRepository, final UserRepository userRepository, final UserService userService) {
         this.eventService = eventService;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @ModelAttribute
@@ -51,9 +56,26 @@ public class EventController {
     }
 
     @GetMapping
-    public String list(final Model model) {
-        model.addAttribute("events", eventService.findAll());
-        return "event/list";
+    public String listEvents(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false, defaultValue = "date") String sort,
+            Model model
+    ) {
+        // Get events with filters
+        List<EventDTO> events = eventService.findEvents(search, category, date, location, sort);
+        
+        // Add to model
+        model.addAttribute("events", events);
+        model.addAttribute("search", search);
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedDate", date);
+        model.addAttribute("selectedLocation", location);
+        model.addAttribute("currentSort", sort);
+        
+        return "events/eventlist";
     }
 
     @GetMapping("/add")
@@ -111,6 +133,25 @@ public class EventController {
         eventDTO.setDateTime(OffsetDateTime.parse(dateTimeWithOffset));
         eventService.create(eventDTO);
         return "redirect:/events";
+    }
+
+    @GetMapping("/{id}")
+    public String showEventDetail(@PathVariable Long id, Model model) {
+        // Get event details
+        EventDTO event = eventService.get(id);
+        
+        // Get organizer details
+        UserDTO organizer = userService.get(event.getOrganizerId());
+        
+        // Get related events from same organizer
+        List<EventDTO> relatedEvents = eventService.findByOrganizer(event.getOrganizerId(), id);
+        
+        // Add to model
+        model.addAttribute("event", event);
+        model.addAttribute("organizer", organizer);
+        model.addAttribute("relatedEvents", relatedEvents);
+        
+        return "eventdetail/eventdetail";
     }
 
 }
