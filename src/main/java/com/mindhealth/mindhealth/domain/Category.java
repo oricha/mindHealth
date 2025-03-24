@@ -9,7 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -36,11 +37,14 @@ public class Category {
     )
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "category")
-    private Set<Event> categoryEvents;
+    @Column
+    private String description;
+
+    @OneToMany(mappedBy = "category", cascade = jakarta.persistence.CascadeType.ALL)
+    private List<Event> events = new ArrayList<>();
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

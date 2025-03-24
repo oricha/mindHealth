@@ -17,20 +17,17 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+  security:
+    user:
+      name: admin
+      password: admin
   docker:
     compose:
       lifecycle-management: start-only
   application:
     name: mindHealth
+    enabled: false
 
-aws:
-  dynamodb:
-    endpoint: http://localhost:8000
-    region: us-west-2
-    accessKey: local-access-key
-    secretKey: local-secret-key
-  sdk:
-    region: us-west-2
 error:
   handling:
     http-status-in-json-response: true
@@ -40,3 +37,4 @@ error:
       5xx: ERROR
 springdoc:
   pathsToMatch: /api/**
+

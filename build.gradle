@@ -27,6 +27,8 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
     implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5')
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-crypto'
     developmentOnly('org.springframework.boot:spring-boot-docker-compose')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     compileOnly 'org.projectlombok:lombok:1.18.30'

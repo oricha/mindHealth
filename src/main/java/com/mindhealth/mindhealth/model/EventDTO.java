@@ -40,6 +40,10 @@ public class EventDTO {
     @NotNull
     private Integer availableSeats;
 
+    private String imageUrl;
+
+    private String name;
+
     private Long category;
 
     @NotNull
