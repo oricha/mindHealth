@@ -54,19 +54,12 @@ public class Event {
 
     // ✅ Keep JPA relationship for Hibernate
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)  // Ensure it's NOT NULL in JPA
+    @JoinColumn(name = "category_id", nullable = false, columnDefinition = "BIGINT")  // Ensure it's NOT NULL in JPA
     private Category category;
 
-    // ✅ New field for DynamoDB, used to store category ID separately
-    @Column(name = "category_id", insertable = false, updatable = false)  // Only for JPA compatibility
-    private String categoryId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organizer_id", nullable = false)
+    @JoinColumn(name = "organizer_id", nullable = false, columnDefinition = "BIGINT")
     private User organizer;
-
-    @Column(name = "organizer_id", insertable = false, updatable = false)  // Only for JPA compatibility
-    private String organizerId;
 
     @OneToMany(mappedBy = "event")
     private Set<Ticket> eventTickets;
@@ -83,11 +76,9 @@ public class Event {
     // ✅ Sync category and categoryId for DynamoDB
     public void setCategory(Category category) {
         this.category = category;
-        this.categoryId = category != null ? category.getId().toString() : null;
     }
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
-        this.organizerId = organizer != null ? organizer.getId().toString() : null;
     }
 }
