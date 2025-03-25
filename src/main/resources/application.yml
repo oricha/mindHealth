@@ -32,47 +32,10 @@ spring:
   docker:
     compose:
       lifecycle-management: start-only
+  application:
+    name: mindHealth
+    enabled: false
 
-format_sql: true
-
----
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    url: jdbc:postgresql://localhost:5432/mindhealth
-    username: postgres
-    password: postgres
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    url: ${RDS_URL}
-    username: ${RDS_USERNAME}
-    password: ${RDS_PASSWORD}
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      idle-timeout: 300000
-      connection-timeout: 20000
-      max-lifetime: 1200000
-
-docker:
-  compose:
-    lifecycle-management: start-only
-
-aws:
-  dynamodb:
-    endpoint: http://localhost:8000
-    region: us-west-2
-    accessKey: local-access-key
-    secretKey: local-secret-key
-  sdk:
-    region: us-west-2
 error:
   handling:
     http-status-in-json-response: true
@@ -82,5 +45,4 @@ error:
       5xx: ERROR
 springdoc:
   pathsToMatch: /api/**
-
 

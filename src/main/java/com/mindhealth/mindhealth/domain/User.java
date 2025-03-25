@@ -70,4 +70,13 @@ public class User {
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;
 
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(nullable = true)
+    private String avatarUrl;
+
 }

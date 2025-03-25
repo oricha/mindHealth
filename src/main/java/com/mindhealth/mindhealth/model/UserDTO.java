@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
+import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor(force = true)
@@ -16,20 +16,29 @@ public class UserDTO {
 
     @NotNull
     @Size(max = 255)
-    private String name;
-
-    @NotNull
-    @Size(max = 255)
     private String email;
 
-    @NotNull
     @Size(max = 255)
+    private String name;
+
+    @Size(max = 255)
+    private String firstName;
+
+    @Size(max = 255)
+    private String lastName;
+
     private String password;
 
     @NotNull
     @Size(max = 255)
     private String role;
 
+    private String avatarUrl;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    private OffsetDateTime createdAt;
+    private OffsetDateTime dateCreated;
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

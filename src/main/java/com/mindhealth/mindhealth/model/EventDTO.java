@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
@@ -40,6 +42,10 @@ public class EventDTO {
     @NotNull
     private Integer availableSeats;
 
+    private String imageUrl;
+
+    private String name;
+
     private Long category;
 
     @NotNull
@@ -47,4 +53,8 @@ public class EventDTO {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime createdAt;
+
+    Long organizerId;
+    
+    List<String> tags ;
 }

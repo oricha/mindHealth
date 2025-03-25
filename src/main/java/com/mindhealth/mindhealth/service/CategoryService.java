@@ -8,7 +8,6 @@ import com.mindhealth.mindhealth.repos.EventRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import java.util.List;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
