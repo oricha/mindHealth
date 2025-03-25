@@ -32,9 +32,6 @@ spring:
   docker:
     compose:
       lifecycle-management: start-only
-  application:
-    name: mindHealth
-    enabled: false
 
 error:
   handling:
