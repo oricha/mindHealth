@@ -4,6 +4,12 @@ spring:
   profiles:
     active: local
   datasource:
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5434/mindhealth}
+    username: ${JDBC_DATABASE_USERNAME:postgres}
+    password: ${JDBC_DATABASE_PASSWORD:P4ssword!}
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: false
@@ -14,7 +20,20 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        id:
+          new_generator_mappings: true
+  security:
+    user:
+      name: admin
+      password: admin
+  docker:
+    compose:
+      lifecycle-management: start-only
+
+format_sql: true
 
 ---
 spring:
