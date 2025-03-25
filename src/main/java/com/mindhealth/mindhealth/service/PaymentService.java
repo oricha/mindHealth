@@ -9,7 +9,6 @@ import com.mindhealth.mindhealth.repos.TicketRepository;
 import com.mindhealth.mindhealth.repos.UserRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import java.util.List;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 

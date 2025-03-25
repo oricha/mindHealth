@@ -1,7 +1,5 @@
 package com.mindhealth.mindhealth.controller;
 
-import com.mindhealth.mindhealth.domain.Category;
-import com.mindhealth.mindhealth.domain.User;
 import com.mindhealth.mindhealth.model.EventDTO;
 import com.mindhealth.mindhealth.model.UserDTO;
 import com.mindhealth.mindhealth.service.CategoryService;

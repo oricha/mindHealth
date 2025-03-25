@@ -15,7 +15,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -44,9 +43,14 @@ public class EventService {
     }
 
     public EventDTO get(final Long id) {
-        return eventRepository.findById(id)
-                .map(event -> mapToDTO(event, new EventDTO()))
-                .orElseThrow(NotFoundException::new);
+        //TODO remove this
+       return eventRepository.findById(id)
+               .map(event -> mapToDTO(event, new EventDTO()))
+               .orElseThrow(NotFoundException::new);
+        // return eventRepository.findFirst()
+        //         .map(event -> mapToDTO(event, new EventDTO()))
+        //         .orElseThrow(NotFoundException::new);
+
     }
 
     public Long create(final EventDTO eventDTO) {

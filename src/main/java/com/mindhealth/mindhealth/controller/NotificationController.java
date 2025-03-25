@@ -7,7 +7,6 @@ import com.mindhealth.mindhealth.service.NotificationService;
 import com.mindhealth.mindhealth.util.CustomCollectors;
 import com.mindhealth.mindhealth.util.WebUtils;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

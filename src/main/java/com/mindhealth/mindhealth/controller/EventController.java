@@ -2,7 +2,6 @@ package com.mindhealth.mindhealth.controller;
 
 import com.mindhealth.mindhealth.domain.Category;
 import com.mindhealth.mindhealth.domain.User;
-import com.mindhealth.mindhealth.domain.Event;
 import com.mindhealth.mindhealth.model.EventDTO;
 import com.mindhealth.mindhealth.model.UserDTO;
 import com.mindhealth.mindhealth.repos.CategoryRepository;
@@ -13,7 +12,6 @@ import com.mindhealth.mindhealth.util.CustomCollectors;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import com.mindhealth.mindhealth.util.WebUtils;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
