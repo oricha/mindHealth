@@ -1,7 +1,10 @@
+version: '3.8'
 services:
-  dynamodb:
-    image: amazon/dynamodb-local
-    container_name: dynamodb-local
+  postgres:
+    image: postgres:17.4
+    environment:
+    - POSTGRES_DB=mindhealth
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=P4ssword!
     ports:
-      - "8000:8000"
-    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb"]
+    - 5434:5432

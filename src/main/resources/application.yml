@@ -1,15 +1,23 @@
 spring:
+  application:
+    name: mindHealth
+  profiles:
+    active: local
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:h2:mem:mindhealth}
-    username: ${JDBC_DATABASE_USERNAME:sa}
-    password: ${JDBC_DATABASE_PASSWORD:}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5434/mindhealth}
+    username: ${JDBC_DATABASE_USERNAME:postgres}
+    password: ${JDBC_DATABASE_PASSWORD:P4ssword!}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: false
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    open-in-view: false
+    show-sql: true
     properties:
       hibernate:
         jdbc:
@@ -24,9 +32,6 @@ spring:
   docker:
     compose:
       lifecycle-management: start-only
-  application:
-    name: mindHealth
-    enabled: false
 
 error:
   handling:
