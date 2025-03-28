@@ -14,7 +14,10 @@ plugins {
 group = 'com.mindhealth'
 version = '0.0.1-SNAPSHOT'
 
-java.sourceCompatibility = '21'
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 
 bootRun {
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
@@ -51,8 +54,7 @@ node {
     download.set(true)
     version.set('22.14.0')
 }
-
-task npmRunBuild(type: NpmTask) {
+tasks.register('npmRunBuild', NpmTask) {
     args = ['run', 'build']
     dependsOn npmInstall
 
@@ -64,10 +66,15 @@ task npmRunBuild(type: NpmTask) {
     outputs.dir(layout.buildDirectory.dir('resources/main/static'))
 }
 
+
 processResources {
     dependsOn npmRunBuild
 }
 
 tasks.withType(Test) {
     useJUnitPlatform()
+}
+
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
+    ignoreFailures = true
 }

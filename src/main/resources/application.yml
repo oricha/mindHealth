@@ -24,12 +24,11 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+          time_zone: UTC
         id:
           new_generator_mappings: true
         format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        jdbc:
-          time_zone: UTC
   servlet:
     multipart:
       max-file-size: 10MB

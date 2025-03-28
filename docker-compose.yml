@@ -6,31 +6,40 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - DB_USERNAME=${DB_USERNAME}
-      - RDS_ENDPOINT=${RDS_ENDPOINT}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRATION=${JWT_EXPIRATION}
-      - AWS_REGION=${AWS_REGION}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - SERVER_PORT=${SERVER_PORT}
-    secrets:
-      - db_password
-      - aws_secret_key
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-local}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=mindhealth
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-dummy}
+      - SERVER_PORT=${SERVER_PORT:-8080}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - mindhealth-network
 
   db:
     image: postgres:15
     environment:
       - POSTGRES_DB=mindhealth
-      - POSTGRES_USER=${DB_USERNAME}
-    secrets:
-      - db_password
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d mindhealth"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mindhealth-network
 
 volumes:
   postgres_data:
@@ -40,3 +49,6 @@ secrets:
     file: ./secrets/db_password.txt
   aws_secret_key:
     file: ./secrets/aws_secret_key.txt
+networks:
+  mindhealth-network:
+    driver: bridge
