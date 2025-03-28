@@ -1,10 +1,42 @@
 version: '3.8'
+
 services:
-  postgres:
-    image: postgres:17.4
-    environment:
-    - POSTGRES_DB=mindhealth
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=P4ssword!
+  app:
+    build: .
     ports:
-    - 5434:5432
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - DB_USERNAME=${DB_USERNAME}
+      - RDS_ENDPOINT=${RDS_ENDPOINT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - SERVER_PORT=${SERVER_PORT}
+    secrets:
+      - db_password
+      - aws_secret_key
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=mindhealth
+      - POSTGRES_USER=${DB_USERNAME}
+    secrets:
+      - db_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  aws_secret_key:
+    file: ./secrets/aws_secret_key.txt

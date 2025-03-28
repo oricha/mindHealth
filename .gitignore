@@ -42,3 +42,20 @@ bin/
 
 .cursorrules
 .cursor/
+
+# Secrets
+secrets/
+.env
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+*.pwd
+*.secret
+*.env.*
+!.env.example

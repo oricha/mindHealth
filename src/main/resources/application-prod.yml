@@ -1,0 +1,51 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${RDS_URL:jdbc:postgresql://${RDS_ENDPOINT}:5432/mindhealthdb}
+    username: ${RDS_USERNAME:${RDS_USER}}
+    password: ${RDS_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      idle-timeout: 600000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+  security:
+    user:
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:admin}
+
+logging:
+  level:
+    root: INFO
+    com.mindhealth.mindhealth: INFO
+    org.springframework: INFO
+    org.hibernate: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /var/log/mindhealth/application.log
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
+aws:
+  region: ${AWS_REGION}
+  credentials:
+    access-key-id: ${AWS_ACCESS_KEY_ID}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+
+SPRING_PROFILES_ACTIVE=prod 

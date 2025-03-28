@@ -2,23 +2,23 @@ spring:
   application:
     name: mindHealth
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE}
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5434/mindhealth}
-    username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:P4ssword!}
+    url: jdbc:postgresql://${RDS_ENDPOINT}:5432/mindhealth
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
-    driver-class-name: org.postgresql.Driver
-  flyway:
-    enabled: false
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1200000
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ## ddl-auto: update
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: none
+    show-sql: false
     properties:
       hibernate:
         jdbc:
@@ -26,13 +26,33 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   security:
     user:
-      name: admin
-      password: admin
-  docker:
-    compose:
-      lifecycle-management: start-only
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:admin}
+
+server:
+  port: ${SERVER_PORT}
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
+aws:
+  region: ${AWS_REGION}
+  credentials:
+    access-key-id: ${AWS_ACCESS_KEY_ID}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
 
 error:
   handling:
@@ -41,8 +61,21 @@ error:
     full-stacktrace-http-statuses: 5xx
     log-levels:
       5xx: ERROR
+
 springdoc:
   pathsToMatch: /api/**
+
+logging:
+  level:
+    root: INFO
+    com.mindhealth.mindhealth: INFO
+    org.springframework: INFO
+    org.hibernate: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /var/log/mindhealth/application.log
 
 ---
 spring:
