@@ -59,4 +59,7 @@ secrets/
 *.secret
 *.env.*
 !.env.example
-variables.md 
+variables.md
+
+# AWS Configuration
+task-definition.json 

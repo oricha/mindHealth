@@ -1,0 +1,69 @@
+{
+    "family": "mindhealth-app",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskRole",
+    "containerDefinitions": [
+        {
+            "name": "mindhealth-app",
+            "image": "YOUR_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/mindhealth-app:latest",
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "SPRING_PROFILES_ACTIVE",
+                    "value": "prod"
+                },
+                {
+                    "name": "RDS_URL",
+                    "value": "jdbc:postgresql://YOUR_RDS_ENDPOINT:5432/YOUR_DB_NAME"
+                },
+                {
+                    "name": "RDS_ENDPOINT",
+                    "value": "YOUR_RDS_ENDPOINT"
+                },
+                {
+                    "name": "RDS_USERNAME",
+                    "value": "YOUR_DB_USERNAME"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "YOUR_AWS_REGION"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "RDS_PASSWORD",
+                    "valueFrom": "arn:aws:ssm:YOUR_AWS_REGION:YOUR_ACCOUNT_ID:parameter/mindhealth/RDS_PASSWORD"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "valueFrom": "arn:aws:ssm:YOUR_AWS_REGION:YOUR_ACCOUNT_ID:parameter/mindhealth/JWT_SECRET"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:ssm:YOUR_AWS_REGION:YOUR_ACCOUNT_ID:parameter/mindhealth/AWS_ACCESS_KEY_ID"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:ssm:YOUR_AWS_REGION:YOUR_ACCOUNT_ID:parameter/mindhealth/AWS_SECRET_ACCESS_KEY"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/mindhealth-app",
+                    "awslogs-region": "YOUR_AWS_REGION",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ]
+} 

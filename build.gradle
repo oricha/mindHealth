@@ -3,8 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id 'com.github.node-gradle.node' version '7.1.0'
-//    id 'org.graalvm.buildtools.jvm' version '0.9.28'
-//    id 'org.graalvm.buildtools.native' version '0.9.28'  // ✅ THIS IS VALID    id 'checkstyle'
+    id 'checkstyle'
     id 'jacoco'
     id 'org.sonarqube' version '4.4.1.3373'
     id 'com.github.spotbugs' version '5.2.1'
@@ -15,12 +14,14 @@ group = 'com.mindhealth'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
-bootRun {
-    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
@@ -28,26 +29,29 @@ repositories {
 }
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.springframework.boot:spring-boot-starter-validation')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-    implementation('org.springframework.boot:spring-boot-starter-actuator')
-    implementation('org.postgresql:postgresql')
-    implementation('org.flywaydb:flyway-core')
-    implementation('io.github.wimdeblauwe:error-handling-spring-boot-starter:4.5.0')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
-    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.security:spring-security-crypto'
-    developmentOnly('org.springframework.boot:spring-boot-docker-compose')
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('org.testcontainers:postgresql')
-    compileOnly 'org.projectlombok:lombok:1.18.34'
-    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.flywaydb:flyway-core:10.20.0'
+    implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
+    implementation 'org.postgresql:postgresql:42.7.4'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.773'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+    implementation 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.testcontainers:junit-jupiter'
 }
 
 node {
@@ -66,15 +70,10 @@ tasks.register('npmRunBuild', NpmTask) {
     outputs.dir(layout.buildDirectory.dir('resources/main/static'))
 }
 
-
 processResources {
     dependsOn npmRunBuild
 }
 
 tasks.withType(Test) {
     useJUnitPlatform()
-}
-
-tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
-    ignoreFailures = true
 }

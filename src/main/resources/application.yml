@@ -4,9 +4,9 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
   datasource:
-    url: jdbc:postgresql://${RDS_ENDPOINT}:5432/mindhealth
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:mindhealth}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 30000
@@ -17,8 +17,8 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: none
-    show-sql: false
+      ddl-auto: validate
+    show-sql: true
     properties:
       hibernate:
         jdbc:
@@ -27,7 +27,7 @@ spring:
           time_zone: UTC
         id:
           new_generator_mappings: true
-        format_sql: false
+        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
@@ -37,9 +37,19 @@ spring:
     user:
       name: ${ADMIN_USERNAME:admin}
       password: ${ADMIN_PASSWORD:admin}
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    locations: classpath:db/migration
+    table: flyway_schema_history
+    baseline-version: 0
+    baseline-description: baseline
+    connect-retries: 10
+    init-sqls: SET ROLE 'postgres'
 
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT:8080}
   servlet:
     context-path: /api
 
@@ -48,10 +58,10 @@ jwt:
   expiration: ${JWT_EXPIRATION}
 
 aws:
-  region: ${AWS_REGION}
+  region: ${AWS_REGION:us-east-1}
   credentials:
-    access-key-id: ${AWS_ACCESS_KEY_ID}
-    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+    access-key-id: ${AWS_ACCESS_KEY_ID:dummy}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY:dummy}
 
 error:
   handling:
@@ -62,7 +72,13 @@ error:
       5xx: ERROR
 
 springdoc:
-  pathsToMatch: /api/**
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+  paths-to-match: /api/**
+  packages-to-scan: com.mindhealth.mindhealth.controller
+  show-actuator: false
 
 logging:
   level:

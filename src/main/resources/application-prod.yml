@@ -47,6 +47,4 @@ aws:
   region: ${AWS_REGION}
   credentials:
     access-key-id: ${AWS_ACCESS_KEY_ID}
-    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
-
-SPRING_PROFILES_ACTIVE=prod 
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY} 
