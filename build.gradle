@@ -1,8 +1,8 @@
 plugins {
-    id 'org.springframework.boot' version '3.4.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
-    id 'com.github.node-gradle.node' version '7.1.0'
+    id 'com.github.node-gradle.node' version '7.0.2'
     id 'checkstyle'
     id 'jacoco'
     id 'org.sonarqube' version '4.4.1.3373'
@@ -14,8 +14,8 @@ group = 'com.mindhealth'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 configurations {
@@ -36,13 +36,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation 'org.flywaydb:flyway-core:10.20.0'
-    implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
-    implementation 'org.postgresql:postgresql:42.7.4'
+    implementation 'org.flywaydb:flyway-core:10.11.0'
+    implementation 'org.flywaydb:flyway-database-postgresql:10.11.0'
+    implementation 'org.postgresql:postgresql:42.7.3'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.773'
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.661'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
     implementation 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -50,14 +50,15 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql:1.19.7'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.7'
 }
 
 node {
     download.set(true)
     version.set('22.14.0')
 }
+
 tasks.register('npmRunBuild', NpmTask) {
     args = ['run', 'build']
     dependsOn npmInstall

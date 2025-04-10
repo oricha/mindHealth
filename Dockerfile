@@ -1,12 +1,12 @@
 # Build stage
-FROM gradle:8.5-jdk17 AS builder
+FROM gradle:8.6-jdk21 AS builder
 WORKDIR /build
 
 COPY . .
 RUN gradle build --info --no-daemon && ls -l /build/build/libs
 
 # Run stage
-FROM openjdk:17-slim
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
 COPY --from=builder /build/build/libs/*.jar app.jar

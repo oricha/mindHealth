@@ -9,10 +9,10 @@ You are an experienced Senior Java Developer. You always adhere to SOLID princip
 
 ### Application Logic Design:
 1. All request and response handling must be done only in RestController.
-2. All database operation logic must be done in ServiceImpl classes, which must use methods provided by Repositories.
-3. RestControllers cannot autowire Repositories directly unless absolutely beneficial to do so.
-4. ServiceImpl classes cannot query the database directly and must use Repositories methods, unless absolutely necessary.
-5. Data carrying between RestControllers and ServiceImpl classes, and vice versa, must be done only using DTOs.
+2. All database operation logic must be encapsulated in dedicated service classes, using methods provided by repositories.
+3. RestControllers cannot autowire repositories directly unless absolutely beneficial to do so.
+4. Service classes cannot query the database directly and must use repositories, unless absolutely necessary.
+5. Data carrying between RestControllers and services, and vice versa, must be done only using DTOs.
 6. Entity classes must be used only to carry data out of database query executions.
 
 ### Entities:
@@ -32,12 +32,11 @@ You are an experienced Senior Java Developer. You always adhere to SOLID princip
 
 ### Service:
 1. Service classes must be of type interface.
-2. All service class method implementations must be in ServiceImpl classes that implement the service class.
-3. All ServiceImpl classes must be annotated with `@Service`.
-4. All dependencies in ServiceImpl classes must be `@Autowired` without a constructor, unless specified otherwise.
-5. Return objects of ServiceImpl methods should be DTOs, not entity classes, unless absolutely necessary.
-6. For any logic requiring checking the existence of a record, use the corresponding repository method with an appropriate `.orElseThrow` lambda method.
-7. For multiple sequential database executions, must use `@Transactional` or `transactionTemplate`, whichever is appropriate.
+2. Service class implementations must be annotated with `@Service`.
+3. All dependencies in service classes must be `@Autowired` without a constructor, unless specified otherwise.
+4. Return objects of service methods should be DTOs, not entity classes, unless absolutely necessary.
+5. For any logic requiring checking the existence of a record, use the corresponding repository method with an appropriate `.orElseThrow` lambda method.
+6. For multiple sequential database executions, must use `@Transactional` or `transactionTemplate`, whichever is appropriate.
 
 ### Data Transfer Object (DTO):
 1. Must be of type `record`, unless specified otherwise.
@@ -62,67 +61,3 @@ public class ApiResponse<T> {
   private String message;   // success or error message
   private T data;           // return object from service class, if successful
 }
-```
-
-### GlobalExceptionHandler Class (/GlobalExceptionHandler.java):
-```java
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-
-    public static ResponseEntity<ApiResponse<?>> errorResponseEntity(String message, HttpStatus status) {
-        ApiResponse<?> response = new ApiResponse<>("error", message, null);
-        return new ResponseEntity<>(response, status);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return errorResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-}
-```
-
-### Authentication Rules:
-1. Must use **Spring Security** with JWT authentication.
-2. Passwords must be securely hashed using **BCryptPasswordEncoder**.
-3. Endpoints requiring authentication must have proper **role-based access control (RBAC)**.
-4. Use `@PreAuthorize` or `@Secured` annotations for role-based method security.
-5. Implement a custom `UserDetailsService` for authentication.
-6. The authentication filter must extract and validate JWT tokens before processing requests.
-
-### Testing Rules:
-1. Must use **JUnit 5** for unit tests.
-2. Must use **Mockito** and **MockMvc** for service and controller layer tests.
-3. Test coverage must be at least **80%**.
-4. Database-related tests must use **Testcontainers**.
-5. Authentication and authorization tests must use **Spring Security Test** utilities.
-
-### Logging Rules:
-1. Must use **SLF4J** and **Logback** for logging.
-2. All exceptions must be logged at the appropriate level (`error`, `warn`, `info`, `debug`).
-3. Sensitive information (e.g., passwords, tokens) must **never** be logged.
-4. Each request must be logged with **request ID**, timestamp, user details, and endpoint.
-
-### Caching Rules:
-1. Must use **Spring Cache** with **Caffeine** for in-memory caching.
-2. Cache expiration must be explicitly defined per use case.
-3. Use **@Cacheable**, **@CachePut**, and **@CacheEvict** for cache management.
-
-### Security Rules:
-1. Always follow **OWASP** best practices for security.
-2. **CSRF protection** must be enabled unless using stateless authentication.
-3. **CORS policies** must be explicitly defined and restricted as needed.
-4. **Rate limiting** must be implemented to prevent API abuse.
-5. All user inputs must be sanitized to prevent **SQL injection** and **XSS attacks**.
-
-### General Rules:
-1. Code must be **formatted according to Google Java Style Guide**.
-2. Must use **feature branches** with PR reviews before merging to `main`.
-3. Must write **meaningful commit messages**.
-4. Must use **SonarQube** or similar tools for static code analysis.
-5. Database schema changes must be managed using **Flyway**.
-
-### Schema Rules:
-1. Database schemas must be versioned with **Flyway migrations**.
-2. Columns must be **explicitly named**.
-3. Foreign keys must use **ON DELETE CASCADE** when necessary.
-4. Always index frequently queried columns.

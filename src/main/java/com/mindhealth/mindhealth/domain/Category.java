@@ -16,11 +16,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.Table;
 
 @Data
 @NoArgsConstructor(force = true)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "categories")
 public class Category {
 
     @Id
@@ -40,8 +42,11 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column
+    @Column(length = 1000)
     private String description;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @OneToMany(mappedBy = "category", cascade = jakarta.persistence.CascadeType.ALL)
     private List<Event> events = new ArrayList<>();
