@@ -24,7 +24,7 @@ public class MindhealthApplication {
         SpringApplication.run(MindhealthApplication.class, args);
     }
 
-    @Bean
+    //@Bean
     public CommandLineRunner initData(
             UserRepository userRepository,
             CategoryRepository categoryRepository,

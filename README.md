@@ -1,7 +1,5 @@
 # Mindhealth
 
-This app was created with Bootify.io - tips on working with the code [can be found here](https://bootify.io/next-steps/).
-
 ## Development
 
 When starting the application `docker compose up` is called and the app will connect to the contained services.
@@ -49,15 +47,3 @@ environment variable when running the container.
 ```
 gradlew bootBuildImage --imageName=com.mindhealth/mindhealth
 ```
-
-## Further readings
-
-* [Gradle user manual](https://docs.gradle.org/)  
-* [Spring Boot reference](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)  
-* [Spring Data JPA reference](https://docs.spring.io/spring-data/jpa/reference/jpa.html)
-* [Thymeleaf docs](https://www.thymeleaf.org/documentation.html)  
-* [Webpack concepts](https://webpack.js.org/concepts/)  
-* [npm docs](https://docs.npmjs.com/)  
-* [Tailwind CSS](https://tailwindcss.com/)  
-* [Htmx in a nutshell](https://htmx.org/docs/)  
-* [Learn Spring Boot with Thymeleaf](https://www.wimdeblauwe.com/books/taming-thymeleaf/)  
