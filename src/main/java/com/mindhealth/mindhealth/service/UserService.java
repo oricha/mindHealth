@@ -6,11 +6,11 @@ import com.mindhealth.mindhealth.domain.Payment;
 import com.mindhealth.mindhealth.domain.Ticket;
 import com.mindhealth.mindhealth.domain.User;
 import com.mindhealth.mindhealth.model.UserDTO;
-import com.mindhealth.mindhealth.repos.EventRepository;
-import com.mindhealth.mindhealth.repos.NotificationRepository;
-import com.mindhealth.mindhealth.repos.PaymentRepository;
-import com.mindhealth.mindhealth.repos.TicketRepository;
-import com.mindhealth.mindhealth.repos.UserRepository;
+import com.mindhealth.mindhealth.repository.EventRepository;
+import com.mindhealth.mindhealth.repository.NotificationRepository;
+import com.mindhealth.mindhealth.repository.PaymentRepository;
+import com.mindhealth.mindhealth.repository.TicketRepository;
+import com.mindhealth.mindhealth.repository.UserRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import java.util.List;
@@ -43,7 +43,7 @@ public class UserService {
                 .toList();
     }
 
-    public UserDTO get(final Long id) {
+    public UserDTO getUserById(final Long id) {
         return userRepository.findById(id)
                 .map(user -> mapToDTO(user, new UserDTO()))
                 .orElseThrow(NotFoundException::new);

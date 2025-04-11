@@ -4,8 +4,8 @@ import com.mindhealth.mindhealth.domain.Category;
 import com.mindhealth.mindhealth.domain.User;
 import com.mindhealth.mindhealth.model.EventDTO;
 import com.mindhealth.mindhealth.model.UserDTO;
-import com.mindhealth.mindhealth.repos.CategoryRepository;
-import com.mindhealth.mindhealth.repos.UserRepository;
+import com.mindhealth.mindhealth.repository.CategoryRepository;
+import com.mindhealth.mindhealth.repository.UserRepository;
 import com.mindhealth.mindhealth.service.EventService;
 import com.mindhealth.mindhealth.service.UserService;
 import com.mindhealth.mindhealth.util.CustomCollectors;
@@ -134,22 +134,28 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public String showEventDetail(@PathVariable Long id, Model model) {
-        // Get event details
-        EventDTO event = eventService.get(id);
-        
-        // Get organizer details
-        UserDTO organizer = userService.get(event.getOrganizerId());
-        
-        // Get related events from same organizer
-        List<EventDTO> relatedEvents = eventService.findByOrganizer(event.getOrganizerId(), id);
-        
-        // Add to model
-        model.addAttribute("event", event);
-        model.addAttribute("organizer", organizer);
-        model.addAttribute("relatedEvents", relatedEvents);
-        
-        return "eventdetail/eventdetail";
+    public String showEventDetails(@PathVariable Long id, Model model) {
+        try {
+            // Obtener los detalles del evento
+            EventDTO event = eventService.getEventById(id);
+            
+            // Obtener la información del organizador
+            UserDTO organizer = userService.getUserById(event.getOrganizerId());
+            
+            // Obtener eventos relacionados del mismo organizador
+            List<EventDTO> relatedEvents = eventService.findByOrganizer(event.getOrganizerId(), id);
+            
+            // Agregar los atributos al modelo
+            model.addAttribute("event", event);
+            model.addAttribute("organizer", organizer);
+            model.addAttribute("relatedEvents", relatedEvents);
+            
+            return "eventdetail/eventdetail";
+        } catch (Exception e) {
+            // Log the error
+            e.printStackTrace();
+            return "error";
+        }
     }
 
 }

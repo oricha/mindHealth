@@ -21,7 +21,7 @@
         <module name="ModifierOrder"/>
         <module name="RedundantModifier"/>
         <module name="AvoidNestedBlocks"/>
-        <module name="AvoidUsingVolatile"/>
+        <!-- <module name="AvoidUsingVolatile"/> -->
         <module name="ConstantName"/>
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>

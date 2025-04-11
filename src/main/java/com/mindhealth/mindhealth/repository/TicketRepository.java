@@ -1,4 +1,4 @@
-package com.mindhealth.mindhealth.repos;
+package com.mindhealth.mindhealth.repository;
 
 import com.mindhealth.mindhealth.domain.Event;
 import com.mindhealth.mindhealth.domain.Ticket;

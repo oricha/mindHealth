@@ -34,7 +34,7 @@ module.exports = (env, argv) => ({
       },
       {
         test: /\.css$/,
-        include: path.resolve(__dirname, './src/main/resources/css'),
+        include: path.resolve(__dirname, './src/main/resources/static/css'),
         use: [
           argv.mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
           {
@@ -58,7 +58,10 @@ module.exports = (env, argv) => ({
     ]
   },
   resolve: {
-    plugins: [new TsconfigPathsPlugin({})]
+    plugins: [new TsconfigPathsPlugin({})],
+    alias: {
+      css: path.resolve(__dirname, 'src/main/resources/static/css')
+    }
   },
   devServer: {
     port: 8081,
@@ -68,7 +71,8 @@ module.exports = (env, argv) => ({
     watchFiles: [
       'src/main/resources/templates/**/*.html',
       'src/main/resources/ts/**/*.ts',
-      'src/main/resources/css/**/*.css'
+      'src/main/resources/css/**/*.css',
+      'src/main/resources/static/css/*.css'
     ],
     proxy: [
       {

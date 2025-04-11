@@ -37,7 +37,7 @@ public class UserResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable(name = "id") final Long id) {
-        return ResponseEntity.ok(userService.get(id));
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PostMapping

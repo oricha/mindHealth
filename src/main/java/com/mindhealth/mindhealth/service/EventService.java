@@ -5,10 +5,10 @@ import com.mindhealth.mindhealth.domain.Event;
 import com.mindhealth.mindhealth.domain.Ticket;
 import com.mindhealth.mindhealth.domain.User;
 import com.mindhealth.mindhealth.model.EventDTO;
-import com.mindhealth.mindhealth.repos.CategoryRepository;
-import com.mindhealth.mindhealth.repos.EventRepository;
-import com.mindhealth.mindhealth.repos.TicketRepository;
-import com.mindhealth.mindhealth.repos.UserRepository;
+import com.mindhealth.mindhealth.repository.CategoryRepository;
+import com.mindhealth.mindhealth.repository.EventRepository;
+import com.mindhealth.mindhealth.repository.TicketRepository;
+import com.mindhealth.mindhealth.repository.UserRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import java.time.OffsetDateTime;
@@ -176,6 +176,12 @@ public class EventService {
             .limit(4)  // Only get 4 related events
             .map(event -> mapToDTO(event, new EventDTO()))
             .collect(Collectors.toList());
+    }
+
+    public EventDTO getEventById(Long id) {
+        return eventRepository.findById(id)
+                .map(event -> mapToDTO(event, new EventDTO()))
+                .orElseThrow(NotFoundException::new);
     }
 
 }

@@ -3,9 +3,10 @@ package com.mindhealth.mindhealth;
 import com.mindhealth.mindhealth.domain.Category;
 import com.mindhealth.mindhealth.domain.Event;
 import com.mindhealth.mindhealth.domain.User;
-import com.mindhealth.mindhealth.repos.CategoryRepository;
-import com.mindhealth.mindhealth.repos.EventRepository;
-import com.mindhealth.mindhealth.repos.UserRepository;
+import com.mindhealth.mindhealth.repository.CategoryRepository;
+import com.mindhealth.mindhealth.repository.EventRepository;
+import com.mindhealth.mindhealth.repository.UserRepository;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

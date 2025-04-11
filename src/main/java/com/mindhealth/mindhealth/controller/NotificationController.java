@@ -2,7 +2,7 @@ package com.mindhealth.mindhealth.controller;
 
 import com.mindhealth.mindhealth.domain.User;
 import com.mindhealth.mindhealth.model.NotificationDTO;
-import com.mindhealth.mindhealth.repos.UserRepository;
+import com.mindhealth.mindhealth.repository.UserRepository;
 import com.mindhealth.mindhealth.service.NotificationService;
 import com.mindhealth.mindhealth.util.CustomCollectors;
 import com.mindhealth.mindhealth.util.WebUtils;
