@@ -15,10 +15,13 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with Gradle
+        run: ./gradlew clean bootJar -x test
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1

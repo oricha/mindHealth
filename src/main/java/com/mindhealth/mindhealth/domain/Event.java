@@ -46,11 +46,32 @@ public class Event {
     @Column
     private String location;
 
+    @Column
+    private String address;
+
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
     @Column(nullable = false)
     private Integer availableSeats;
+
+    @Column
+    private Integer maxAttendees;
+
+    @Column
+    private Integer soldTickets;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal totalRevenue;
+
+    @Column
+    private boolean active = true;
 
     // ✅ Keep JPA relationship for Hibernate
     @ManyToOne(fetch = FetchType.LAZY)

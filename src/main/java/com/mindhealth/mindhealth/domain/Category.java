@@ -45,8 +45,14 @@ public class Category {
     @Column(length = 1000)
     private String description;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "icon_url")
+    private String iconUrl;
+
+    @Column
+    private boolean active = true;
+
+    @Column(name = "display_order")
+    private Integer displayOrder;
 
     @OneToMany(mappedBy = "category", cascade = jakarta.persistence.CascadeType.ALL)
     private List<Event> events = new ArrayList<>();

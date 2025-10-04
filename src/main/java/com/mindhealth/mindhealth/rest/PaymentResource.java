@@ -1,62 +1,34 @@
 package com.mindhealth.mindhealth.rest;
 
-import com.mindhealth.mindhealth.model.PaymentDTO;
 import com.mindhealth.mindhealth.service.PaymentService;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import java.util.List;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/payments", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/api/payments")
+@RequiredArgsConstructor
 public class PaymentResource {
+    private final PaymentService payments;
 
-    private final PaymentService paymentService;
+    @Data
+    static class IntentRequest { long amountCents; String currency; }
 
-    public PaymentResource(final PaymentService paymentService) {
-        this.paymentService = paymentService;
+    @PostMapping("/intent")
+    public ResponseEntity<String> intent(@RequestBody IntentRequest req) throws Exception {
+        return ResponseEntity.ok(payments.createPaymentIntent(req.amountCents, req.currency));
     }
 
-    @GetMapping
-    public ResponseEntity<List<PaymentDTO>> getAllPayments() {
-        return ResponseEntity.ok(paymentService.findAll());
+    @PostMapping("/confirm")
+    public ResponseEntity<Void> confirm(@RequestParam String paymentIntentId) {
+        payments.confirmPayment(paymentIntentId);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PaymentDTO> getPayment(@PathVariable(name = "id") final Long id) {
-        return ResponseEntity.ok(paymentService.get(id));
+    @PostMapping("/webhooks/stripe")
+    public ResponseEntity<Void> webhook(@RequestBody String payload, @RequestHeader(name="Stripe-Signature", required=false) String signature) {
+        // Placeholder: verify signature and handle events
+        return ResponseEntity.ok().build();
     }
-
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createPayment(@RequestBody @Valid final PaymentDTO paymentDTO) {
-        final Long createdId = paymentService.create(paymentDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Long> updatePayment(@PathVariable(name = "id") final Long id,
-            @RequestBody @Valid final PaymentDTO paymentDTO) {
-        paymentService.update(id, paymentDTO);
-        return ResponseEntity.ok(id);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deletePayment(@PathVariable(name = "id") final Long id) {
-        paymentService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
 }

@@ -44,11 +44,21 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Column(nullable = false)
     private String role;
+
+    // OAuth2 provider fields
+    @Column
+    private String provider; // LOCAL, GOOGLE, FACEBOOK
+
+    @Column
+    private String providerId; // Provider user ID
+
+    @Column
+    private boolean emailVerified;
 
     @OneToMany(mappedBy = "organizer")
     private Set<Event> organizerEvents;

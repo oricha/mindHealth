@@ -1,23 +1,14 @@
-# Build stage
-FROM gradle:8.6-jdk21 AS builder
-WORKDIR /build
+FROM eclipse-temurin:21-jre
 
-COPY . .
-RUN gradle build --info --no-daemon && ls -l /build/build/libs
-
-# Run stage
-FROM eclipse-temurin:21-jre-jammy
+ARG APP_NAME=mindhealth
 WORKDIR /app
 
-COPY --from=builder /build/build/libs/*.jar app.jar
+# Copy build artifact from Gradle build context
+COPY build/libs/*.jar app.jar
 
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD wget -q --spider http://localhost:8080/actuator/health || exit 1
-
+# Default profile can be overridden via env
 ENV SPRING_PROFILES_ACTIVE=prod
-ENV SERVER_PORT=8080
-ENV JAVA_OPTS="-Xms512m -Xmx1024m"
 
 EXPOSE 8080
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app/app.jar"]
 
-ENTRYPOINT exec java $JAVA_OPTS -jar app.jar

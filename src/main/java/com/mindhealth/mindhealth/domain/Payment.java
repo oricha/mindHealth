@@ -45,10 +45,16 @@ public class Payment {
     private BigDecimal amount;
 
     @Column
+    private String currency;
+
+    @Column
     private OffsetDateTime paymentDate;
 
     @Column(nullable = false)
     private String status;
+
+    @Column
+    private String stripePaymentIntentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

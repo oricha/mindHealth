@@ -42,10 +42,27 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DB:0}
   security:
     user:
       name: ${ADMIN_USERNAME:admin}
       password: ${ADMIN_PASSWORD:admin}
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope: profile,email
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID:}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:}
+            scope: public_profile,email
+        provider: {}
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -69,6 +86,25 @@ aws:
   credentials:
     access-key-id: ${AWS_ACCESS_KEY_ID:dummy}
     secret-access-key: ${AWS_SECRET_ACCESS_KEY:dummy}
+  s3:
+    bucket: ${S3_BUCKET_NAME:mindhealth-local}
+
+stripe:
+  api-key: ${STRIPE_API_KEY:}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+
+spring:
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:false}
+          starttls:
+            enable: ${SMTP_STARTTLS:false}
 
 error:
   handling:
@@ -135,4 +171,3 @@ error:
       5xx: ERROR
 springdoc:
   pathsToMatch: /**
-

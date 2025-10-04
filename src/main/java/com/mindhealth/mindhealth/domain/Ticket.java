@@ -43,6 +43,12 @@ public class Ticket {
     private String qrCode;
 
     @Column
+    private String s3Key;
+
+    @Column
+    private Integer quantity;
+
+    @Column
     private OffsetDateTime purchaseDate;
 
     @Column(nullable = false)

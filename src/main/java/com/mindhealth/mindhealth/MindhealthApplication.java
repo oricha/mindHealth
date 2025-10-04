@@ -18,7 +18,12 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
 @SpringBootApplication
+@EnableScheduling
+@EnableAsync
 public class MindhealthApplication {
 
     public static void main(final String[] args) {
