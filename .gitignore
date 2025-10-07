@@ -62,4 +62,11 @@ secrets/
 variables.md
 
 # AWS Configuration
-task-definition.json 
+task-definition.json
+
+# Agents
+*.agent
+/.agent
+/.kiro
+AGENTS.md
+/docs/*
