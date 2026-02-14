@@ -70,3 +70,4 @@ task-definition.json
 /.kiro
 AGENTS.md
 /docs/*
+./.metals

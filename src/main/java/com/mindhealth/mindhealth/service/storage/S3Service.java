@@ -5,7 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +14,12 @@ import java.net.URL;
 import java.util.Date;
 
 @Service
-@RequiredArgsConstructor
 public class S3Service {
 
     private final AmazonS3 s3;
     private final String bucket;
 
+    @Autowired
     public S3Service(
             @Value("${aws.region:us-east-1}") String region,
             @Value("${aws.credentials.access-key-id:dummy}") String accessKey,
