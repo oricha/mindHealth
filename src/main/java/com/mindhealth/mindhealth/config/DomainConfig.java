@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EntityScan("com.mindhealth.mindhealth.domain")
-@EnableJpaRepositories("com.mindhealth.mindhealth.repos")
+@EnableJpaRepositories("com.mindhealth.mindhealth.repository")
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")
 public class DomainConfig {

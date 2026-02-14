@@ -13,11 +13,29 @@ version = '0.0.1-SNAPSHOT'
 java.sourceCompatibility = '21'
 
 bootRun {
-    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
+    // Load .env for local development (DB_*, JWT_*, etc.)
+    if (file('.env').exists()) {
+        file('.env').readLines().each { line ->
+            def trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#') && trimmed.contains('=')) {
+                def sep = trimmed.indexOf('=')
+                def key = trimmed.substring(0, sep).trim()
+                def value = trimmed.substring(sep + 1).trim().replaceAll(/^["']|["']$/, '')
+                if (key && !key.startsWith('#')) {
+                    environment key: value
+                }
+            }
+        }
+    }
+    // Default to dev profile for local bootRun (connects to localhost Postgres/Redis)
+    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'dev'
 }
 
 springBoot {
-    // Align with actual main class name in the repo
+    mainClass = 'com.mindhealth.mindhealth.MindhealthApplication'
+}
+
+bootJar {
     mainClass = 'com.mindhealth.mindhealth.MindhealthApplication'
 }
 
@@ -46,6 +64,7 @@ dependencies {
     implementation 'com.google.zxing:javase:3.5.3'
     implementation 'io.micrometer:micrometer-core:1.13.6'
     implementation 'org.flywaydb:flyway-core:10.20.0'
+    implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
