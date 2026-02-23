@@ -11,7 +11,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor(force = true)
 public class CategoryDTO {
 
-    @NotNull
     private Long id;
 
     @NotNull

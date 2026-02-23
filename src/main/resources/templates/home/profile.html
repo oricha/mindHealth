@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>User Dashboard</title>
+</head>
+<body>
+<div layout:fragment="content" class="space-y-8">
+    <h1 class="text-3xl font-semibold">User Dashboard</h1>
+    <section class="grid md:grid-cols-2 gap-6">
+        <div class="border rounded-lg p-4 bg-white">
+            <h2 class="text-xl font-medium mb-4">Users</h2>
+            <ul class="space-y-2 text-sm">
+                <li th:each="user : ${users}">
+                    <span th:text="${user.email}">user@example.com</span>
+                </li>
+            </ul>
+        </div>
+        <div class="border rounded-lg p-4 bg-white">
+            <h2 class="text-xl font-medium mb-4">Purchased Tickets</h2>
+            <ul class="space-y-2 text-sm">
+                <li th:each="ticket : ${tickets}">
+                    <span th:text="${ticket.qrCode}">qr</span>
+                    <a class="underline ml-2" th:href="@{/tickets/edit/{id}(id=${ticket.id})}">View</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+</div>
+</body>
+</html>

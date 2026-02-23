@@ -67,11 +67,27 @@ spring:
           auth: ${SMTP_AUTH:false}
           starttls:
             enable: ${SMTP_STARTTLS:false}
-
 server:
   port: ${SERVER_PORT:8080}
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT:30m}
+      cookie:
+        http-only: true
+        secure: ${SESSION_COOKIE_SECURE:false}
+        same-site: lax
+  ssl:
+    enabled: ${SERVER_SSL_ENABLED:false}
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
   health:
     mail:
       enabled: ${MAIL_HEALTH_ENABLED:false}
@@ -105,7 +121,7 @@ springdoc:
     enabled: true
   swagger-ui:
     path: /swagger-ui.html
-  packages-to-scan: com.mindhealth.mindhealth.controller
+  packages-to-scan: com.mindhealth.mindhealth
   show-actuator: false
 
 logging:
@@ -115,8 +131,8 @@ logging:
     org.springframework: INFO
     org.hibernate: INFO
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} [%X{correlationId:-na}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} [%X{correlationId:-na}] - %msg%n"
   file:
     name: /var/log/mindhealth/application.log
 
@@ -157,3 +173,4 @@ error:
       5xx: ERROR
 springdoc:
   pathsToMatch: /**
+  show-actuator: false

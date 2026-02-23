@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -31,7 +32,12 @@ public class EventResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventDTO>> getAllEvents() {
+    public ResponseEntity<List<EventDTO>> getAllEvents(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size) {
+        if (page != null && size != null) {
+            return ResponseEntity.ok(eventService.findPaged(page, size));
+        }
         return ResponseEntity.ok(eventService.findAll());
     }
 

@@ -1,19 +1,26 @@
 package com.mindhealth.mindhealth.service;
 
 import com.mindhealth.mindhealth.domain.Event;
+import com.mindhealth.mindhealth.domain.Payment;
 import com.mindhealth.mindhealth.domain.Ticket;
 import com.mindhealth.mindhealth.domain.User;
 import com.mindhealth.mindhealth.model.UserDTO;
 import com.mindhealth.mindhealth.repository.EventRepository;
+import com.mindhealth.mindhealth.repository.PaymentRepository;
 import com.mindhealth.mindhealth.repository.TicketRepository;
 import com.mindhealth.mindhealth.repository.UserRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
+import com.mindhealth.mindhealth.util.PasswordPolicy;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final TicketRepository ticketRepository;
+    private final PaymentRepository paymentRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<UserDTO> findAll() {
@@ -49,6 +57,7 @@ public class UserService {
         mapToEntity(userDTO, user);
         user.setRole(userDTO.getRole() != null ? userDTO.getRole() : "ROLE_USER");
         if (userDTO.getPassword() != null) {
+            PasswordPolicy.validate(userDTO.getPassword());
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
         userRepository.save(user);
@@ -62,6 +71,7 @@ public class UserService {
         u.setLastName(dto.getLastName());
         u.setRole("ROLE_USER");
         if (dto.getPassword() != null) {
+            PasswordPolicy.validate(dto.getPassword());
             u.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
         return userRepository.save(u).getId();
@@ -71,6 +81,7 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(userDTO, user);
         if (userDTO.getPassword() != null && !userDTO.getPassword().isBlank()) {
+            PasswordPolicy.validate(userDTO.getPassword());
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
         userRepository.save(user);
@@ -108,7 +119,47 @@ public class UserService {
 
     public List<Ticket> getUserEventHistory(Long userId) {
         User u = userRepository.findById(userId).orElseThrow(NotFoundException::new);
-        return u.getUserTickets().stream().toList();
+        return ticketRepository.findByUser(u);
+    }
+
+    public Map<String, Object> exportUserData(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
+        Map<String, Object> export = new LinkedHashMap<>();
+        export.put("user", mapToDTO(user, new UserDTO()));
+        export.put("tickets", ticketRepository.findByUser(user));
+        export.put("payments", paymentRepository.findByUser(user));
+        export.put("eventsOrganized", eventRepository.findByOrganizer_Id(userId));
+        return export;
+    }
+
+    @Transactional
+    public void deleteUserAccount(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
+        List<Ticket> tickets = ticketRepository.findByUser(user);
+        for (Ticket ticket : tickets) {
+            if (ticket.getEvent() != null && ticket.getEvent().getDateTime() != null
+                    && ticket.getEvent().getDateTime().isAfter(OffsetDateTime.now())) {
+                ticket.setPaymentStatus("CANCELLED");
+            }
+        }
+        ticketRepository.saveAll(tickets);
+
+        List<Payment> payments = paymentRepository.findByUser(user);
+        for (Payment payment : payments) {
+            payment.setStatus("REFUNDED");
+        }
+        paymentRepository.saveAll(payments);
+
+        user.setEmail("deleted+" + user.getId() + "@anon.local");
+        user.setName("Deleted User");
+        user.setFirstName("Deleted");
+        user.setLastName("User");
+        user.setPassword(null);
+        user.setAvatarUrl(null);
+        user.setProvider(null);
+        user.setProviderId(null);
+        user.setEmailVerified(false);
+        userRepository.save(user);
     }
 
     private UserDTO mapToDTO(User user, UserDTO dto) {
@@ -134,4 +185,3 @@ public class UserService {
         user.setAvatarUrl(dto.getAvatarUrl());
     }
 }
-

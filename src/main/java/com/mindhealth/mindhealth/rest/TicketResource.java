@@ -6,6 +6,7 @@ import com.mindhealth.mindhealth.util.ReferencedException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.Data;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +31,11 @@ public class TicketResource {
         this.ticketService = ticketService;
     }
 
+    @Data
+    public static class ValidateRequest {
+        private String qrCode;
+    }
+
     @GetMapping
     public ResponseEntity<List<TicketDTO>> getAllTickets() {
         return ResponseEntity.ok(ticketService.findAll());
@@ -38,6 +44,21 @@ public class TicketResource {
     @GetMapping("/{id}")
     public ResponseEntity<TicketDTO> getTicket(@PathVariable(name = "id") final Long id) {
         return ResponseEntity.ok(ticketService.get(id));
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<TicketDTO>> getUserTickets(@PathVariable Long userId) {
+        return ResponseEntity.ok(ticketService.findByUser(userId));
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<String> getDownloadUrl(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.getTicketDownloadUrl(id));
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Boolean> validate(@RequestBody ValidateRequest request) {
+        return ResponseEntity.ok(ticketService.validateTicket(request.getQrCode()));
     }
 
     @PostMapping

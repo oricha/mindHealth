@@ -29,6 +29,28 @@
                             <li>
                                 <a th:href="@{/}" class="block text-gray-500 p-2">[[#{navigation.home}]]</a>
                             </li>
+                            <li>
+                                <a th:href="@{/dashboard/profile}" class="block text-gray-500 p-2">Profile</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/dashboard/organizer}" class="block text-gray-500 p-2">Organizer</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/dashboard/admin}" class="block text-gray-500 p-2">Admin</a>
+                            </li>
+                            <li class="relative">
+                                <button type="button" class="js-dropdown block text-gray-500 p-2 cursor-pointer" id="navbarCategoriesLink"
+                                        aria-expanded="false">
+                                    <span>Categories</span>
+                                    <span class="text-[9px] align-[3px] pl-0.5">&#9660;</span>
+                                </button>
+                                <ul class="hidden block absolute right-0 bg-white border border-gray-300 rounded min-w-[10rem] py-2" aria-labelledby="navbarCategoriesLink">
+                                    <li th:each="category : ${navCategories}">
+                                        <a th:href="@{/events(category=${category.id})}" class="inline-block w-full hover:bg-gray-200 px-4 py-1"
+                                           th:text="${category.name}">Category</a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="relative">
                                 <button type="button" class="js-dropdown block text-gray-500 p-2 cursor-pointer" id="navbarEntitiesLink"
                                         aria-expanded="false">

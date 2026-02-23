@@ -1,6 +1,7 @@
 package com.mindhealth.mindhealth.security;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.SecurityException;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
@@ -18,7 +18,7 @@ public class JwtTokenProvider {
 
     private static final int MIN_KEY_BYTES = 32; // 256 bits for HS256
 
-    private final Key key;
+    private final javax.crypto.SecretKey key;
     private final long expirationMs;
 
     public JwtTokenProvider(
@@ -32,7 +32,7 @@ public class JwtTokenProvider {
         this.expirationMs = expirationMs;
     }
 
-    private Key buildHmacKey(byte[] secretBytes) throws NoSuchAlgorithmException, InvalidKeyException {
+    private javax.crypto.SecretKey buildHmacKey(byte[] secretBytes) throws NoSuchAlgorithmException, InvalidKeyException {
         if (secretBytes.length >= MIN_KEY_BYTES) {
             return Keys.hmacShaKeyFor(secretBytes);
         }
@@ -52,5 +52,22 @@ public class JwtTokenProvider {
                 .signWith(key)
                 .compact();
     }
-}
 
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            return true;
+        } catch (SecurityException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public String getSubject(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+}

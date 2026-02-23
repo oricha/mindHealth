@@ -11,6 +11,7 @@ import com.mindhealth.mindhealth.util.NotFoundException;
 import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
+    private final MeterRegistry meterRegistry;
 
     @PostConstruct
     public void init() {
@@ -65,6 +67,7 @@ public class PaymentService {
     }
 
     public String createPaymentIntent(long amountCents, String currency) throws Exception {
+        meterRegistry.counter("payments.intent.requests").increment();
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                 .setAmount(amountCents)
                 .setCurrency(currency)
@@ -75,6 +78,7 @@ public class PaymentService {
 
     public boolean confirmPayment(String paymentIntentId) {
         // Placeholder: Real confirmation is from client + webhook
+        meterRegistry.counter("payments.confirm.requests").increment();
         return true;
     }
 
@@ -107,4 +111,3 @@ public class PaymentService {
         }
     }
 }
-
