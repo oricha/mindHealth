@@ -32,14 +32,14 @@ ALTER TABLE payment
 
 -- Review table
 CREATE TABLE IF NOT EXISTS review (
-    id BIGINT PRIMARY KEY,
+    id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('primary_sequence'),
     rating INTEGER NOT NULL,
     comment VARCHAR(2000),
     organizer_response VARCHAR(2000),
-    user_id BIGINT,
-    event_id BIGINT,
-    date_created TIMESTAMPTZ,
-    last_updated TIMESTAMPTZ
+    user_id BIGINT REFERENCES "User"(id),
+    event_id BIGINT REFERENCES event(id),
+    date_created TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    last_updated TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Indexes

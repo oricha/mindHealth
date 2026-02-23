@@ -2,26 +2,267 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout}">
     <head>
-        <title>[[#{home.index.headline}]]</title>
+        <title>Hipsy - Joy for the Body, Power for the Soul</title>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="stylesheet" href="/css/bundle.css">
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <style>
+            .accent-dot {
+                position: absolute;
+                border-radius: 50%;
+                z-index: 1;
+            }
+            .dot-green { background-color: #34D399; }
+            .dot-orange { background-color: #FBBF24; }
+            .event-card {
+                background: white;
+                border-radius: 1rem;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+            .event-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+            .theme-card {
+                background: white;
+                border-radius: 0.75rem;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+            .theme-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            }
+            .bg-mint {
+                background-color: #f0faf5;
+            }
+            .nav-link {
+                position: relative;
+                padding: 0.5rem 1rem;
+                color: #1F2937;
+                font-weight: 500;
+            }
+            .nav-link:hover::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 1rem;
+                right: 1rem;
+                height: 2px;
+                background-color: #059669;
+            }
+            .nav-link.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 1rem;
+                right: 1rem;
+                height: 2px;
+                background-color: #059669;
+            }
+        </style>
     </head>
     <body>
         <div layout:fragment="content">
-            <h1 class="grow text-3xl md:text-4xl font-medium mb-8">[[#{home.index.headline}]]</h1>
-            <p class="mb-4">[(#{home.index.text})]</p>
-            <p class="mb-12">
-                <span>[[#{home.index.swagger.text}]]</span>
-                <a th:href="@{/swagger-ui.html}" target="_blank" class="underline">[[#{home.index.swagger.link}]]</a>.
-            </p>
-            <div class="md:w-2/5 mb-12">
-                <h4 class="text-2xl font-medium mb-4">[[#{home.index.exploreEntities}]]</h4>
-                <div class="flex flex-col border border-gray-300 rounded">
-                    <a th:href="@{/users}" class="w-full border-gray-300 hover:bg-gray-100 border-b rounded-t px-4 py-2">[[#{user.list.headline}]]</a>
-                    <a th:href="@{/categories}" class="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">[[#{category.list.headline}]]</a>
-                    <a th:href="@{/events}" class="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">[[#{event.list.headline}]]</a>
-                    <a th:href="@{/tickets}" class="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">[[#{ticket.list.headline}]]</a>
-                    <a th:href="@{/payments}" class="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">[[#{payment.list.headline}]]</a>
-                    <a th:href="@{/notifications}" class="w-full border-gray-300 hover:bg-gray-100 rounded-b px-4 py-2">[[#{notification.list.headline}]]</a>
+            <!-- Header -->
+            <header class="bg-white shadow-sm">
+                <div class="container mx-auto px-4">
+                    <div class="flex items-center justify-between h-20">
+                        <!-- Logo -->
+                        <a href="/" class="flex items-center">
+                            <img src="/images/hipsy-logo.svg" alt="Hipsy" class="h-12">
+                        </a>
+
+                        <!-- Navigation -->
+                        <nav class="hidden md:flex items-center space-x-1">
+                            <div class="relative group">
+                                <a href="/events" class="nav-link group">
+                                    EVENTS
+                                    <svg class="w-4 h-4 ml-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </a>
+                            </div>
+                            <a href="#" class="nav-link">ABOUT HIPSY</a>
+                            <a href="#" class="nav-link">STAFF</a>
+                        </nav>
+
+                        <!-- Right side buttons -->
+                        <div class="flex items-center space-x-4">
+                            <a href="#" class="text-emerald-600 font-medium hover:text-emerald-700">
+                                ORGANIZE YOUR EVENT
+                            </a>
+                            <a href="/login" class="px-4 py-2 border-2 border-gray-900 rounded-lg hover:bg-gray-100">
+                                Login
+                            </a>
+                            <a href="/register" class="text-emerald-600 font-medium hover:text-emerald-700">
+                                To register
+                            </a>
+                            <!-- Language selector -->
+                            <div class="relative">
+                                <button class="flex items-center space-x-1 text-gray-600 hover:text-gray-900">
+                                    <span>EN</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mobile menu button -->
+                        <button class="md:hidden rounded-lg p-2 hover:bg-gray-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Rest of the content -->
+            <div class="bg-mint min-h-screen">
+                <!-- Hero Section -->
+                <div class="container mx-auto px-4 py-12 relative">
+                    <div class="accent-dot dot-green w-16 h-16 top-12 right-24"></div>
+                    <div class="accent-dot dot-orange w-12 h-12 bottom-8 left-16"></div>
+                    
+                    <div class="max-w-4xl">
+                        <h1 class="text-5xl font-bold mb-6">
+                            Joy for the Body,<br>
+                            Power for the Soul.
+                        </h1>
+                        <p class="text-xl text-gray-600 mb-8">
+                            Find workshops, community events, dance, sharing circles and more in your area.
+                        </p>
+                        <div class="flex gap-4 mb-12">
+                            <input type="text" placeholder="Location" class="px-4 py-3 rounded-lg border border-gray-300 w-64">
+                            <button class="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700">
+                                Discover our Hipsy
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Featured Images -->
+                    <div class="grid grid-cols-2 gap-8 mt-12">
+                        <img src="/images/community-1.jpg" alt="Community Event" class="rounded-2xl w-full h-64 object-cover">
+                        <img src="/images/community-2.jpg" alt="Community Event" class="rounded-2xl w-full h-64 object-cover">
+                    </div>
+                </div>
+
+                <!-- Popular Events Section -->
+                <div class="container mx-auto px-4 py-12">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold">Popular in <span class="text-emerald-600">Nederland</span></h2>
+                        <div class="flex gap-4">
+                            <button class="px-4 py-2 rounded-full bg-gray-100">Today</button>
+                            <button class="px-4 py-2 rounded-full bg-gray-100">This weekend</button>
+                            <button class="px-4 py-2 rounded-full bg-gray-100">Next week</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-6">
+                        <div th:each="event : ${popularEvents}" class="event-card">
+                            <a th:href="@{/events/{id}(id=${event.getId()})}">
+                                <img th:src="${event.getImageUrl()}" class="w-full h-48 object-cover">
+                                <div class="p-4">
+                                    <div class="flex items-center gap-2 mb-2" 
+                                         th:with="organizer=${organizers.get(event.getOrganizerId())}">
+                                        <img th:if="${organizer != null}" 
+                                             th:src="${organizer.getAvatarUrl()}" 
+                                             class="w-8 h-8 rounded-full">
+                                        <span th:if="${organizer != null}" 
+                                              th:text="${organizer.getFullName()}" 
+                                              class="text-sm text-gray-600">Organizer Name</span>
+                                    </div>
+                                    <h3 th:text="${event.getTitle()}" class="font-semibold mb-2">Event Title</h3>
+                                    <div class="flex gap-2">
+                                        <span th:each="tag : ${event.getTags()}" 
+                                              class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-800" 
+                                              th:text="${tag}">Tag</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-8">
+                        <button class="text-emerald-600 font-medium flex items-center gap-2 mx-auto">
+                            View all events
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Themes Section -->
+                <div class="container mx-auto px-4 py-12">
+                    <h2 class="text-2xl font-bold mb-8">Explore the themes</h2>
+                    <div class="grid grid-cols-3 gap-6">
+                        <div th:each="theme : ${themes}" class="theme-card">
+                            <img th:src="${theme.get('image')}" th:alt="${theme.get('name')}" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <span class="text-sm text-gray-500" th:text="${theme.get('count') + ' events'}">5,000 events</span>
+                                <h3 class="font-semibold" th:text="${theme.get('name')}">Theme Name</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Section -->
+                <div class="container mx-auto px-4 py-12">
+                    <h2 class="text-2xl font-bold mb-8">From our Community</h2>
+                    <div class="grid grid-cols-2 gap-8">
+                        <div th:each="story : ${communityStories}" class="bg-white rounded-2xl p-6">
+                            <img th:src="${story.get('image')}" th:alt="${story.get('title')}" class="w-full h-64 object-cover rounded-xl mb-4">
+                            <h3 class="text-xl font-semibold mb-2" th:text="${story.get('title')}">Story Title</h3>
+                            <p class="text-gray-600" th:text="${story.get('description')}">Story description</p>
+                            <div class="flex items-center gap-3 mt-4">
+                                <img th:src="${story.get('author').get('avatar')}" th:alt="${story.get('author').get('name')}" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <p class="font-medium" th:text="${story.get('author').get('name')}">Author Name</p>
+                                    <p class="text-sm text-gray-500" th:text="${story.get('author').get('role')}">Role</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why Hipsy Section -->
+                <div class="container mx-auto px-4 py-12">
+                    <h2 class="text-2xl font-bold mb-8">Why Hipsy?</h2>
+                    <div class="grid grid-cols-3 gap-8">
+                        <div class="text-center">
+                            <div class="text-4xl mb-4">🎯</div>
+                            <h3 class="font-semibold mb-2">Find what you need</h3>
+                            <p class="text-gray-600">We'll help you plan every step of your local experience</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl mb-4">📍</div>
+                            <h3 class="font-semibold mb-2">Search in the right target group</h3>
+                            <p class="text-gray-600">Find what you're looking for</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl mb-4">💝</div>
+                            <h3 class="font-semibold mb-2">Contribute to Hipsy's mission</h3>
+                            <p class="text-gray-600">Be part of our story</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Newsletter Section -->
+                <div class="container mx-auto px-4 py-12">
+                    <div class="bg-gray-100 rounded-2xl p-8">
+                        <h2 class="text-2xl font-bold mb-4">Want to stay informed?</h2>
+                        <h3 class="text-xl mb-6">Sign up for the Hipsy Newsletter</h3>
+                        <div class="flex gap-4">
+                            <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 rounded-lg border border-gray-300">
+                            <button class="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700">
+                                Keep me informed!
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

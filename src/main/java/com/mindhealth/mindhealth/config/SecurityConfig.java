@@ -2,8 +2,6 @@ package com.mindhealth.mindhealth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.mindhealth.mindhealth.security.CustomOAuth2UserService;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,8 +10,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -34,10 +30,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/events/**").permitAll()
                 .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth -> oauth
-                .userInfoEndpoint(cfg -> cfg.userService(customOAuth2UserService))
-                .defaultSuccessUrl("/", true)
             )
             .formLogin(form -> form.loginPage("/login").permitAll())
             .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/"));

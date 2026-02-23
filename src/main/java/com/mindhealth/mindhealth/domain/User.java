@@ -50,7 +50,6 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    // OAuth2 provider fields
     @Column
     private String provider; // LOCAL, GOOGLE, FACEBOOK
 

@@ -16,9 +16,4 @@ public class WebAdvice {
         return request.getRequestURI();
     }
 
-    @ModelAttribute("isDevserver")
-    public Boolean getIsDevserver(final HttpServletRequest request) {
-        return "1".equals(request.getHeader("X-Devserver"));
-    }
-
 }

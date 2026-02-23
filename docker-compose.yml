@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -18,13 +16,9 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - SERVER_PORT=${SERVER_PORT:-8080}
       - MANAGEMENT_SERVER_PORT=${MANAGEMENT_SERVER_PORT:-8081}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_started
     networks:
       - mindhealth-network
 
@@ -35,7 +29,7 @@ services:
       - POSTGRES_USER=${DB_USERNAME:-postgres}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -43,13 +37,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - mindhealth-network
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
     networks:
       - mindhealth-network
 

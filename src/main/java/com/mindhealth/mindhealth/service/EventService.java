@@ -91,6 +91,7 @@ public class EventService {
         eventDTO.setAvailableSeats(event.getAvailableSeats());
         eventDTO.setCategory(event.getCategory() == null ? null : event.getCategory().getId());
         eventDTO.setOrganizer(event.getOrganizer() == null ? null : event.getOrganizer().getId());
+        eventDTO.setOrganizerId(event.getOrganizer() == null ? null : event.getOrganizer().getId());
         return eventDTO;
     }
 
