@@ -30,7 +30,6 @@ MindHealth is a comprehensive Spring Boot application that enables wellness enth
 
 ## Prerequisites
 - [Java 21](https://adoptium.net/)
-- [Node.js](https://nodejs.org/) 22 (for frontend dev server; Gradle downloads Node for builds)
 - [Docker](https://www.docker.com/get-started/) and Docker Compose (for database)
 
 ### Environment Variables
@@ -55,25 +54,15 @@ This starts PostgreSQL on port 5433 (or 5432 if available). The app will connect
 ```
 The default profile is `local`. In IntelliJ, add `-Dspring.profiles.active=local` in Run Configuration VM options.
 
-### 3. Optional: Frontend Dev Server (Hot Reload)
-For live reload of TypeScript, CSS, and templates:
-```bash
-npm install          # First time and after dependency updates
-npm run devserver
-```
-Access the app at `http://localhost:8081` (dev server proxies API to the backend on 8080).
-
 ## Build Commands
 
 | Command | Description |
 |---------|-------------|
-| `./gradlew build` | Full build: compiles Java, runs tests, bundles JS/CSS via npm, produces JAR |
+| `./gradlew build` | Full build: compiles Java, runs tests, produces JAR |
 | `./gradlew clean build` | Clean build |
 | `./gradlew bootJar -x test` | Build runnable JAR without running tests |
 | `./gradlew test` | Run unit and integration tests |
 | `./gradlew jacocoTestReport` | Generate coverage report at `build/reports/jacoco/test/html/index.html` |
-
-Node.js is downloaded automatically by the Gradle Node plugin; JS/CSS assets are bundled into the final JAR during `build`.
 
 ## Run in Production
 
@@ -104,7 +93,7 @@ Starts the app and PostgreSQL together. Configure via `.env` and `docker-compose
 ## Project Structure
 - `src/main/java/com/mindhealth/mindhealth` — domain, DTOs, repositories, services, controllers, config
 - `src/main/resources/templates` — Thymeleaf views
-- `src/main/resources/static`, `ts/` — CSS, TypeScript (Webpack entry: `ts/app.ts`)
+- `src/main/resources/static` — CSS, JavaScript assets
 - `src/main/resources/db/migration` — Flyway migrations
 
 ## Troubleshooting
@@ -129,21 +118,6 @@ SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 ```
 
 Or in IntelliJ: set `SPRING_PROFILES_ACTIVE=dev` in Run Configuration environment variables (and avoid loading a `.env` that sets `prod`).
-
-### nodeSetup fails ("Couldn't follow symbolic link" or similar)
-
-The Node.js cache may be corrupted. Remove it and retry:
-
-```bash
-rm -rf .gradle/nodejs
-./gradlew bootRun
-```
-
-**Alternative:** Use your system Node (if installed) to skip the download:
-
-```bash
-USE_SYSTEM_NODE=true ./gradlew bootRun
-```
 
 ### Flyway migration failed (e.g. "relation does not exist")
 

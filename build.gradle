@@ -2,7 +2,6 @@ plugins {
     id 'org.springframework.boot' version '3.4.3'
     id 'java'
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'com.github.node-gradle.node' version '7.1.0'
     id 'jacoco'
     id 'checkstyle'
 }
@@ -73,29 +72,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.3'
     testImplementation 'org.testcontainers:postgresql:1.20.0'
     testImplementation 'org.testcontainers:junit-jupiter:1.20.2'
-}
-
-node {
-    // Set USE_SYSTEM_NODE=true to use system Node (avoids download/symlink issues)
-    def useSystemNode = System.getenv('USE_SYSTEM_NODE') == 'true'
-    download.set(!useSystemNode)
-    version.set('22.14.0')
-}
-
-tasks.register('npmRunBuild', NpmTask) {
-    args = ['run', 'build']
-    dependsOn npmInstall
-
-    inputs.files(fileTree('node_modules'))
-    inputs.files(fileTree('src/main/resources'))
-    inputs.file('package.json')
-    inputs.file('tsconfig.json')
-    inputs.file('webpack.config.js')
-    outputs.dir(layout.buildDirectory.dir('resources/main/static'))
-}
-
-processResources {
-    dependsOn npmRunBuild
 }
 
 tasks.withType(Test) {

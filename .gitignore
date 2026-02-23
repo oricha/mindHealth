@@ -7,7 +7,6 @@ build/
 application-local.yml
 *.log
 .DS_Store
-node_modules/
 
 ## IntelliJ IDEA
 .idea
@@ -71,3 +70,4 @@ task-definition.json
 AGENTS.md
 /docs/*
 ./.metals
+node_modules

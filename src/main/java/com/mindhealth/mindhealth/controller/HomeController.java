@@ -30,22 +30,17 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String index() {
-        return "home/index";
-    }
-
-    @GetMapping("/home")
-    public String showNewHome(Model model) {
+    public String index(Model model) {
         try {
             // Get popular events
             List<EventDTO> popularEvents = eventService.getPopularEvents();
-            
+
             // Get organizers for these events
             List<Long> organizerIds = popularEvents.stream()
                     .map(EventDTO::getOrganizer)
                     .distinct()
                     .collect(Collectors.toList());
-            
+
             Map<Long, UserDTO> organizers = userService.getUsersByIds(organizerIds)
                     .stream()
                     .collect(Collectors.toMap(
@@ -100,12 +95,16 @@ public class HomeController {
             model.addAttribute("organizers", organizers);
             model.addAttribute("themes", themes);
             model.addAttribute("communityStories", communityStories);
-            
-            return "home/index2";
+
+            return "home/index";
         } catch (Exception e) {
-            // Log the error
-            e.printStackTrace(); // Replace with proper logging
+            e.printStackTrace();
             return "error";
         }
+    }
+
+    @GetMapping("/home")
+    public String showAdmin() {
+        return "home/admin";
     }
 }
