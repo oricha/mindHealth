@@ -69,5 +69,6 @@ task-definition.json
 /.kiro
 AGENTS.md
 /docs/*
-./.metals
-node_modules
+.metals/
+.metals/metals.lock.db
+node_modules/
