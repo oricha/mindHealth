@@ -13,6 +13,7 @@ version = '0.0.1-SNAPSHOT'
 java.sourceCompatibility = '21'
 
 bootRun {
+    mainClass = 'com.mindhealth.mindhealth.MindhealthApplication'
     // Load .env for local development (DB_*, JWT_*, etc.)
     if (file('.env').exists()) {
         file('.env').readLines().each { line ->
@@ -27,7 +28,7 @@ bootRun {
             }
         }
     }
-    // Default to dev profile for local bootRun (connects to localhost Postgres/Redis)
+    // Default to dev profile for local bootRun (connects to localhost Postgres)
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'dev'
 }
 
@@ -50,8 +51,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:3.4.3'
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.4.3'
     implementation 'org.springframework.boot:spring-boot-starter-security:3.4.3'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:3.4.3'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.4.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.4.3'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
     implementation 'org.postgresql:postgresql:42.7.4'
@@ -77,7 +76,9 @@ dependencies {
 }
 
 node {
-    download.set(true)
+    // Set USE_SYSTEM_NODE=true to use system Node (avoids download/symlink issues)
+    def useSystemNode = System.getenv('USE_SYSTEM_NODE') == 'true'
+    download.set(!useSystemNode)
     version.set('22.14.0')
 }
 

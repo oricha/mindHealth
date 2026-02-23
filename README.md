@@ -11,7 +11,7 @@ MindHealth is a comprehensive Spring Boot application that enables wellness enth
 - **Secure ticket purchase** — Check out with Stripe payment processing
 - **Digital tickets** — Receive PDF tickets with unique QR codes by email (stored in AWS S3)
 - **Reviews and ratings** — Leave and view event reviews (1–5 stars) after attending
-- **Account management** — Register via email/password or social login (Google, Facebook), update profile, view purchase history
+- **Account management** — Register via email/password, update profile, view purchase history
 
 ### For Organizers
 - **Create and manage events** — Add events with images, categories, location, pricing, and attendee limits
@@ -22,22 +22,21 @@ MindHealth is a comprehensive Spring Boot application that enables wellness enth
 - **Category management** — Define and manage event categories for navigation and filtering
 
 ### Technical Highlights
-- **Authentication**: Spring Security with OAuth2 (Google, Facebook) and JWT for API access
+- **Authentication**: Spring Security with form login and JWT for API access
 - **Payments**: Stripe integration for PCI-compliant payment processing
-- **Storage**: AWS S3 for ticket PDFs; PostgreSQL for data; Redis for search caching
+- **Storage**: AWS S3 for ticket PDFs; PostgreSQL for data
 - **Notifications**: Email confirmations, ticket delivery, event reminders (1 week before), organizer messages
-- **Stack**: Spring Boot 3, Java 21, Thymeleaf, PostgreSQL, Redis, Flyway migrations
+- **Stack**: Spring Boot 3, Java 21, Thymeleaf, PostgreSQL, Flyway migrations
 
 ## Prerequisites
 - [Java 21](https://adoptium.net/)
 - [Node.js](https://nodejs.org/) 22 (for frontend dev server; Gradle downloads Node for builds)
-- [Docker](https://www.docker.com/get-started/) and Docker Compose (for database and Redis)
+- [Docker](https://www.docker.com/get-started/) and Docker Compose (for database)
 
 ### Environment Variables
 Create an `application-local.yml` or use a `.env` file. Key variables:
 - **Database**: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`
 - **Auth**: `JWT_SECRET`, `SPRING_PROFILES_ACTIVE=local` (or `dev`)
-- **OAuth2**: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`
 - **Stripe**: `STRIPE_API_KEY`, `STRIPE_WEBHOOK_SECRET`
 - **AWS S3**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET_NAME`
 - **Mail**: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` (e.g. [MailHog](https://github.com/mailhog/MailHog) for local dev)
@@ -46,9 +45,9 @@ Create an `application-local.yml` or use a `.env` file. Key variables:
 
 ### 1. Start Dependencies
 ```bash
-docker-compose up -d db redis
+docker-compose up -d db
 ```
-This starts PostgreSQL on port 5432 and Redis on 6379. The app will connect to these services.
+This starts PostgreSQL on port 5433 (or 5432 if available). The app will connect to it.
 
 ### 2. Run the Application
 ```bash
@@ -94,7 +93,7 @@ Set `SPRING_PROFILES_ACTIVE=production` in the container environment.
 ```bash
 docker-compose up -d
 ```
-Starts the app, PostgreSQL, and Redis together. Configure via `.env` and `docker-compose.yml`.
+Starts the app and PostgreSQL together. Configure via `.env` and `docker-compose.yml`.
 
 ## Key Endpoints
 - **App**: `http://localhost:8080/`
@@ -115,8 +114,8 @@ Starts the app, PostgreSQL, and Redis together. Configure via `.env` and `docker
 **Local development (Docker Postgres):** The PostgreSQL data volume may have been created with different credentials. Reset it:
 
 ```bash
-docker-compose down -v          # Remove containers and volumes
-docker-compose up -d db redis   # Recreate with credentials from .env
+docker-compose down -v       # Remove containers and volumes
+docker-compose up -d db      # Recreate with credentials from .env
 ```
 
 Ensure your `.env` (or environment) has `DB_PASSWORD=postgres` (or match whatever you set). The app and Docker Postgres must use the same password.
@@ -131,13 +130,28 @@ SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 
 Or in IntelliJ: set `SPRING_PROFILES_ACTIVE=dev` in Run Configuration environment variables (and avoid loading a `.env` that sets `prod`).
 
+### nodeSetup fails ("Couldn't follow symbolic link" or similar)
+
+The Node.js cache may be corrupted. Remove it and retry:
+
+```bash
+rm -rf .gradle/nodejs
+./gradlew bootRun
+```
+
+**Alternative:** Use your system Node (if installed) to skip the download:
+
+```bash
+USE_SYSTEM_NODE=true ./gradlew bootRun
+```
+
 ### Flyway migration failed (e.g. "relation does not exist")
 
 If a migration failed, reset the database and retry (for local dev):
 
 ```bash
 docker-compose down -v
-docker-compose up -d db redis
+docker-compose up -d db
 # Then run the app again
 ```
 
