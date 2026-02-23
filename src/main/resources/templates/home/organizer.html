@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Organizer Dashboard</title>
+</head>
+<body>
+<div layout:fragment="content" class="space-y-8">
+    <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-semibold">Organizer Dashboard</h1>
+        <a class="px-4 py-2 rounded bg-emerald-600 text-white" th:href="@{/events/add}">Create Event</a>
+    </div>
+    <section class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <article th:each="event : ${events}" class="border rounded-lg p-4 bg-white">
+            <h2 class="font-semibold" th:text="${event.title}">Event</h2>
+            <p class="text-sm text-gray-600" th:text="${event.location}">Location</p>
+            <p class="text-sm mt-2" th:text="${'Seats: ' + event.availableSeats}">Seats</p>
+            <div class="mt-4 flex gap-2">
+                <a class="underline" th:href="@{/events/edit/{id}(id=${event.id})}">Edit</a>
+                <a class="underline" th:href="@{/events/{id}(id=${event.id})}">Details</a>
+            </div>
+        </article>
+    </section>
+</div>
+</body>
+</html>

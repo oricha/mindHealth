@@ -7,6 +7,9 @@ import com.mindhealth.mindhealth.repository.CategoryRepository;
 import com.mindhealth.mindhealth.repository.EventRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +19,19 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
+    private final MeterRegistry meterRegistry;
 
     public CategoryService(final CategoryRepository categoryRepository,
-            final EventRepository eventRepository) {
+            final EventRepository eventRepository,
+            final MeterRegistry meterRegistry) {
         this.categoryRepository = categoryRepository;
         this.eventRepository = eventRepository;
+        this.meterRegistry = meterRegistry;
     }
 
+    @Cacheable(cacheNames = "categories")
     public List<CategoryDTO> findAll() {
-        final List<Category> categories = categoryRepository.findAll();
+        final List<Category> categories = categoryRepository.findAllByActiveTrueOrderByDisplayOrderAscNameAsc();
         return categories.stream()
                 .map(category -> mapToDTO(category, new CategoryDTO()))
                 .toList();
@@ -39,18 +46,25 @@ public class CategoryService {
     public Long create(final CategoryDTO categoryDTO) {
         final Category category = new Category();
         mapToEntity(categoryDTO, category);
-        return categoryRepository.save(category).getId();
+        meterRegistry.counter("categories.create.requests").increment();
+        Long id = categoryRepository.save(category).getId();
+        evictCategoryCache();
+        return id;
     }
 
     public void update(final Long id, final CategoryDTO categoryDTO) {
         final Category category = categoryRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(categoryDTO, category);
+        meterRegistry.counter("categories.update.requests").increment();
         categoryRepository.save(category);
+        evictCategoryCache();
     }
 
     public void delete(final Long id) {
+        meterRegistry.counter("categories.delete.requests").increment();
         categoryRepository.deleteById(id);
+        evictCategoryCache();
     }
 
     private CategoryDTO mapToDTO(final Category category, final CategoryDTO categoryDTO) {
@@ -62,6 +76,11 @@ public class CategoryService {
     private Category mapToEntity(final CategoryDTO categoryDTO, final Category category) {
         category.setName(categoryDTO.getName());
         return category;
+    }
+
+    @CacheEvict(cacheNames = "categories", allEntries = true)
+    public void evictCategoryCache() {
+        // cache eviction marker
     }
 
     public ReferencedWarning getReferencedWarning(final Long id) {

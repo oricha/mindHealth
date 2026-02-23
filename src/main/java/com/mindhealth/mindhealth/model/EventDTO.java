@@ -17,7 +17,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor(force = true)
 public class EventDTO {
 
-    @NotNull
     private Long id;
 
     @NotNull

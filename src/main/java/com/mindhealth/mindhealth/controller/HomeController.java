@@ -1,9 +1,11 @@
 package com.mindhealth.mindhealth.controller;
 
 import com.mindhealth.mindhealth.model.EventDTO;
+import com.mindhealth.mindhealth.model.TicketDTO;
 import com.mindhealth.mindhealth.model.UserDTO;
 import com.mindhealth.mindhealth.service.CategoryService;
 import com.mindhealth.mindhealth.service.EventService;
+import com.mindhealth.mindhealth.service.TicketService;
 import com.mindhealth.mindhealth.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,13 +22,16 @@ public class HomeController {
     private final EventService eventService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final TicketService ticketService;
 
     public HomeController(final EventService eventService, 
                          final UserService userService,
-                         final CategoryService categoryService) {
+                         final CategoryService categoryService,
+                         final TicketService ticketService) {
         this.eventService = eventService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.ticketService = ticketService;
     }
 
     @GetMapping("/")
@@ -106,5 +111,27 @@ public class HomeController {
     @GetMapping("/home")
     public String showAdmin() {
         return "home/admin";
+    }
+
+    @GetMapping("/dashboard/profile")
+    public String profileDashboard(Model model) {
+        List<UserDTO> users = userService.findAll();
+        List<TicketDTO> tickets = ticketService.findAll();
+        model.addAttribute("users", users);
+        model.addAttribute("tickets", tickets);
+        return "home/profile";
+    }
+
+    @GetMapping("/dashboard/organizer")
+    public String organizerDashboard(Model model) {
+        model.addAttribute("events", eventService.findAll());
+        return "home/organizer";
+    }
+
+    @GetMapping("/dashboard/admin")
+    public String adminDashboard(Model model) {
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("users", userService.findAll());
+        return "home/admin-dashboard";
     }
 }

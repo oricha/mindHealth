@@ -15,7 +15,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor(force = true)
 public class PaymentDTO {
 
-    @NotNull
     private Long id;
 
     @NotNull

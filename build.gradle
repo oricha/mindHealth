@@ -51,16 +51,18 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.4.3'
     implementation 'org.springframework.boot:spring-boot-starter-security:3.4.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.4.3'
+    implementation 'org.springframework.boot:spring-boot-starter-cache:3.4.3'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
     implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.773'
+    implementation 'software.amazon.awssdk:s3:2.25.0'
     implementation 'org.projectlombok:lombok:1.18.36'
     implementation 'com.stripe:stripe-java:24.0.0'
     implementation 'org.apache.pdfbox:pdfbox:2.0.32'
     implementation 'com.google.zxing:core:3.5.3'
     implementation 'com.google.zxing:javase:3.5.3'
     implementation 'io.micrometer:micrometer-core:1.13.6'
+    implementation 'com.bucket4j:bucket4j-core:8.10.1'
     implementation 'org.flywaydb:flyway-core:10.20.0'
     implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
@@ -74,7 +76,7 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.20.2'
 }
 
-tasks.withType(Test) {
+tasks.named('test') {
     useJUnitPlatform()
 }
 

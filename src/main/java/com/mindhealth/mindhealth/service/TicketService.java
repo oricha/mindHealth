@@ -9,9 +9,11 @@ import com.mindhealth.mindhealth.repository.EventRepository;
 import com.mindhealth.mindhealth.repository.PaymentRepository;
 import com.mindhealth.mindhealth.repository.TicketRepository;
 import com.mindhealth.mindhealth.repository.UserRepository;
+import com.mindhealth.mindhealth.service.storage.S3Service;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.QRCodeGenerator;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,8 @@ public class TicketService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
+    private final MeterRegistry meterRegistry;
+    private final S3Service s3Service;
 
     public List<TicketDTO> findAll() {
         return ticketRepository.findAll().stream()
@@ -53,6 +58,7 @@ public class TicketService {
         if (ticket.getQuantity() == null) {
             ticket.setQuantity(1);
         }
+        meterRegistry.counter("tickets.create.requests").increment();
         return ticketRepository.save(ticket).getId();
     }
 
@@ -95,7 +101,27 @@ public class TicketService {
             t.setPurchaseDate(OffsetDateTime.now());
             ids.add(ticketRepository.save(t).getId());
         }
+        meterRegistry.counter("tickets.generate.requests").increment(quantity);
         return ids;
+    }
+
+    public List<TicketDTO> findByUser(Long userId) {
+        return ticketRepository.findByUser_Id(userId).stream()
+                .map(ticket -> mapToDTO(ticket, new TicketDTO()))
+                .toList();
+    }
+
+    public boolean validateTicket(String qrCode) {
+        Ticket ticket = ticketRepository.findByQrCode(qrCode);
+        return ticket != null && Objects.equals(ticket.getPaymentStatus(), "COMPLETED");
+    }
+
+    public String getTicketDownloadUrl(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(NotFoundException::new);
+        if (ticket.getS3Key() == null || ticket.getS3Key().isBlank()) {
+            throw new NotFoundException("ticket has no file");
+        }
+        return s3Service.getPresignedUrl(ticket.getS3Key(), 15).toString();
     }
 
     private TicketDTO mapToDTO(Ticket ticket, TicketDTO dto) {
@@ -137,4 +163,3 @@ public class TicketService {
         }
     }
 }
-

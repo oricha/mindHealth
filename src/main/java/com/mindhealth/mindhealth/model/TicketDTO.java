@@ -11,10 +11,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor(force = true)
 public class TicketDTO {
 
-    @NotNull
     private Long id;
 
-    @NotNull
     @Size(max = 255)
     private String qrCode;
 

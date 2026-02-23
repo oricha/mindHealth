@@ -11,6 +11,10 @@ import com.mindhealth.mindhealth.repository.TicketRepository;
 import com.mindhealth.mindhealth.repository.UserRepository;
 import com.mindhealth.mindhealth.util.NotFoundException;
 import com.mindhealth.mindhealth.util.ReferencedWarning;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,14 +29,17 @@ public class EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
+    private final MeterRegistry meterRegistry;
 
     public EventService(final EventRepository eventRepository,
             final CategoryRepository categoryRepository, final UserRepository userRepository,
-            final TicketRepository ticketRepository) {
+            final TicketRepository ticketRepository,
+            final MeterRegistry meterRegistry) {
         this.eventRepository = eventRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.ticketRepository = ticketRepository;
+        this.meterRegistry = meterRegistry;
     }
 
     public List<EventDTO> findAll() {
@@ -56,17 +63,23 @@ public class EventService {
     public Long create(final EventDTO eventDTO) {
         final Event event = new Event();
         mapToEntity(eventDTO, event);
-        return eventRepository.save(event).getId();
+        meterRegistry.counter("events.create.requests").increment();
+        Long id = eventRepository.save(event).getId();
+        evictEventCaches();
+        return id;
     }
 
     public void update(final Long id, final EventDTO eventDTO) {
         final Event event = eventRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(eventDTO, event);
+        meterRegistry.counter("events.update.requests").increment();
         eventRepository.save(event);
+        evictEventCaches();
     }
 
 
+    @Cacheable(cacheNames = "popular-events")
     public List<EventDTO> getPopularEvents() {
         // This is a basic implementation. You might want to modify the logic
         // based on your specific criteria for "popular" events
@@ -78,7 +91,14 @@ public class EventService {
 
 
     public void delete(final Long id) {
+        meterRegistry.counter("events.delete.requests").increment();
         eventRepository.deleteById(id);
+        evictEventCaches();
+    }
+
+    @CacheEvict(cacheNames = {"popular-events", "event-autocomplete"}, allEntries = true)
+    public void evictEventCaches() {
+        // cache eviction marker
     }
 
     private EventDTO mapToDTO(final Event event, final EventDTO eventDTO) {
@@ -183,6 +203,13 @@ public class EventService {
         return eventRepository.findById(id)
                 .map(event -> mapToDTO(event, new EventDTO()))
                 .orElseThrow(NotFoundException::new);
+    }
+
+    public List<EventDTO> findPaged(int page, int size) {
+        return eventRepository.findAllWithRelations(PageRequest.of(page, size))
+                .stream()
+                .map(event -> mapToDTO(event, new EventDTO()))
+                .toList();
     }
 
 }
